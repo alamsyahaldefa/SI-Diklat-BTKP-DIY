@@ -98,10 +98,6 @@
   }
 }
 
-/*
-* Layout demo
-******************************************************************************/
-
 .layout-demo-wrapper {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -122,5 +118,3 @@
   text-align: center;
   margin-top: 1rem;
 }
-
-

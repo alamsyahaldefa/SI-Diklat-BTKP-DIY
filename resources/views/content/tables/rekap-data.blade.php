@@ -103,13 +103,14 @@
     <div class="card-body">
       <!-- Button Filter Peserta -->
       <div class="row mb-3">
-        <div class="col">
-          <button type="button" class="btn btn-outline-dark" id="btnLolos" onclick="toggleTable('lolos')">Peserta
-            Lolos</button>
-          <button type="button" class="btn btn-outline-dark" id="btnMendaftar"
-            onclick="toggleTable('mendaftar')">Peserta Mendaftar</button>
-        </div>
-      </div>
+  <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+    <input type="radio" class="btn-check" name="btnToggle" id="btnLolos" autocomplete="off" checked onclick="toggleTable('lolos')">
+    <label class="btn btn-outline-dark" for="btnLolos">Peserta Lolos</label>
+    
+    <input type="radio" class="btn-check" name="btnToggle" id="btnMendaftar" autocomplete="off" onclick="toggleTable('mendaftar')">
+    <label class="btn btn-outline-dark" for="btnMendaftar">Peserta Mendaftar</label>
+  </div>
+</div>
 
       <!-- Tabel Peserta Lolos -->
       <div id="lolosTable" class="card">
