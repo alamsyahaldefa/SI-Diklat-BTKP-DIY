@@ -1,6 +1,6 @@
 @extends('layouts/blankLayout')
 
-@section('title', 'Login Basic - Pages')
+@section('title', 'Login Administrator')
 
 @section('page-style')
 <!-- Page -->
@@ -42,7 +42,7 @@
               </div>
             </div>
             <div class="mb-3">
-              <button class="btn btn-primary d-grid w-100" type="submit">LOGIN</button>
+              <a href="{{ route('dashboard') }}" class="btn btn-primary d-grid w-100">LOGIN</a>
             </div>
           </form>
 
