@@ -4,28 +4,28 @@
       "menuHeader": "Kelola Diklat"
     },
     {
-      "url": "/",
-      "name": "Dashboards",
+      "url": "/dashboard",
+      "name": "Dashboard",
       "icon": "menu-icon tf-icons bx bx-home-circle",
-      "slug": "dashboard-analytics"
+      "slug": "dashboard"
     },
     {
-      "url": "form/layouts-horizontal",
+      "url": "tambah-diklat",
       "icon": "menu-icon tf-icons bx bx-detail",
       "name": "Tambah Diklat",
-      "slug": "form-layouts-horizontal"
+      "slug": "tambah-diklat"
     },
     {
-      "url": "tables/basic",
+      "url": "data-diklat",
       "icon": "menu-icon tf-icons bx bx-table",
       "name": "Data Diklat",
-      "slug": "tables-basic"
+      "slug": "data-diklat"
     },
     {
       "name": "Foto Diklat",
       "icon": "menu-icon tf-icons bx bx-collection",
       "slug": "foto-diklat",
-      "url": "cards/basic"
+      "url": "foto-diklat"
     },
     {
       "name": "Authentications",

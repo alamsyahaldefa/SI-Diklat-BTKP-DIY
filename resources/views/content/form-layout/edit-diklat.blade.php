@@ -11,7 +11,7 @@
         <a href="javascript:void(0);">Administrator</a>
       </li>
       <li class="breadcrumb-item">
-        <a onclick="window.location.href='{{ route('tables-basic') }}'">Data Diklat</a>
+        <a onclick="window.location.href='{{ route('data-diklat') }}'">Data Diklat</a>
       </li>
       <li class="breadcrumb-item active">Edit Diklat</li>
     </ol>
@@ -76,7 +76,7 @@
         <!-- Buttons -->
         <div class="row justify-content-end">
           <div class="col-sm-10">
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='{{ route('tables-basic') }}'">Back</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='{{ route('data-diklat') }}'">Back</button>
             <button type="submit" class="btn btn-primary">Send</button>
           </div>
         </div>

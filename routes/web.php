@@ -1,11 +1,11 @@
 <?php
 
+use App\Http\Controllers\DaftarController;
+use App\Http\Controllers\dashboard\Dashboard;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RekapData;
 use App\Http\Controllers\EditDiklat;
-use App\Http\Controllers\FotoDiklat;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\dashboard\Analytics;
 use App\Http\Controllers\layouts\WithoutMenu;
 use App\Http\Controllers\layouts\WithoutNavbar;
 use App\Http\Controllers\layouts\Fluid;
@@ -16,10 +16,10 @@ use App\Http\Controllers\pages\AccountSettingsNotifications;
 use App\Http\Controllers\pages\AccountSettingsConnections;
 use App\Http\Controllers\pages\MiscError;
 use App\Http\Controllers\pages\MiscUnderMaintenance;
-use App\Http\Controllers\authentications\LoginBasic;
+use App\Http\Controllers\authentications\Login;
 use App\Http\Controllers\authentications\RegisterBasic;
 use App\Http\Controllers\authentications\ForgotPasswordBasic;
-use App\Http\Controllers\cards\CardBasic;
+use App\Http\Controllers\cards\FotoDiklat;
 use App\Http\Controllers\user_interface\Accordion;
 use App\Http\Controllers\user_interface\Alerts;
 use App\Http\Controllers\user_interface\Badges;
@@ -45,11 +45,15 @@ use App\Http\Controllers\icons\Boxicons;
 use App\Http\Controllers\form_elements\BasicInput;
 use App\Http\Controllers\form_elements\InputGroups;
 use App\Http\Controllers\form_layouts\VerticalForm;
-use App\Http\Controllers\form_layouts\HorizontalForm;
-use App\Http\Controllers\tables\Basic as TablesBasic;
+use App\Http\Controllers\form_layouts\TambahDiklat;
+use App\Http\Controllers\tables\DataDiklat;
 
 // Main Page Route
-Route::get('/', [Analytics::class, 'index'])->name('dashboard-analytics');
+Route::get('/', [Login::class, 'index'])->name('auth-login');
+
+// Rute dashboard 
+Route::get('/dashboard', [Dashboard::class, 'index'])->name('dashboard');
+
 
 // layout
 Route::get('/layouts/without-menu', [WithoutMenu::class, 'index'])->name('layouts-without-menu');
@@ -66,14 +70,11 @@ Route::get('/layouts/blank', [Blank::class, 'index'])->name('layouts-blank');
 // Route::get('/pages/misc-under-maintenance', [MiscUnderMaintenance::class, 'index'])->name('pages-misc-under-maintenance');
 
 // authentication
-Route::get('/auth/login-basic', [LoginBasic::class, 'index'])->name('auth-login-basic');
 Route::get('/auth/register-basic', [RegisterBasic::class, 'index'])->name('auth-register-basic');
 Route::get('/auth/forgot-password-basic', [ForgotPasswordBasic::class, 'index'])->name('auth-reset-password-basic');
 
 // cards
-Route::get('/cards/basic', [CardBasic::class, 'index'])->name('cards-basic');
-
-Route::get('/cards/foto-diklat', [FotoDiklat::class, 'index'])->name('foto-diklat');
+Route::get('/foto-diklat', [FotoDiklat::class, 'index'])->name('foto-diklat');
 
 // User Interface
 // Route::get('/ui/accordion', [Accordion::class, 'index'])->name('ui-accordion');
@@ -109,10 +110,10 @@ Route::get('/icons/boxicons', [Boxicons::class, 'index'])->name('icons-boxicons'
 
 // form layouts
 Route::get('/form/layouts-vertical', [VerticalForm::class, 'index'])->name('form-layouts-vertical');
-Route::get('/form/layouts-horizontal', [HorizontalForm::class, 'index'])->name('form-layouts-horizontal');
+Route::get('/tambah-diklat', [TambahDiklat::class, 'index'])->name('tambah-diklat');
 
 // tables
-Route::get('/tables/basic', [TablesBasic::class, 'index'])->name('tables-basic');
+Route::get('/data-diklat', [DataDiklat::class, 'index'])->name('data-diklat');
 
 
 // Route untuk halaman edit diklat
@@ -122,3 +123,10 @@ Route::get('/edit-diklat', [EditDiklat::class, 'edit'])->name('edit-diklat');
 Route::get('/rekap-data', [RekapData::class, 'index'])->name('rekap.data');
 
 Route::get('/users', [UserController::class, 'index'])->name('users.index');
+
+
+Route::get('/daftar-diklat', [DaftarController::class, 'index'])->name('daftar.diklat');
+
+Route::get('/form-daftar', function () {
+    return view('users.form-daftar');
+})->name('form.daftar');

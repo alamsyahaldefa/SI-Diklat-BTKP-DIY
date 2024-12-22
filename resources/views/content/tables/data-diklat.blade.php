@@ -23,7 +23,7 @@
     <div>
       <!-- Tombol "Tambah Diklat" dengan ikon plus -->
       <button type="button" class="btn btn-outline-primary"
-        onclick="window.location.href='{{ route('form-layouts-horizontal') }}'">
+        onclick="window.location.href='{{ route('tambah-diklat') }}'">
         <i class="bx bx-plus"></i> Tambah Diklat
       </button>
 
