@@ -3,14 +3,17 @@
   "version": "1.1.1",
   "private": true,
   "scripts": {
+    "install-deps": "composer install && npm install && npm install --save-dev postcss autoprefixer file-loader",
     "dev": "npm run development",
-    "build": "npm run build",
+    "build": "npm run build-production",
     "development": "mix",
     "watch": "mix watch",
     "watch-poll": "mix watch -- --watch-options-poll=1000",
     "hot": "mix watch --hot",
     "prod": "npm run production",
-    "production": "mix --production"
+    "production": "mix --production",
+    "clean": "rimraf public/mix-manifest.json public/assets/vendor/fonts node_modules/.cache",
+    "build-production": "npm run clean && npm run production"
   },
   "devDependencies": {
     "@babel/core": "7.22.5",
