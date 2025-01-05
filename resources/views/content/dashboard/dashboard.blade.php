@@ -1,6 +1,6 @@
 @extends('layouts/contentNavbarLayout')
 
-@section('title', 'Dashboard Administrator')
+@section('title', 'Dashboard Administrator -')
 
 @section('vendor-style')
 <link rel="stylesheet" href="{{asset('assets/vendor/libs/apex-charts/apex-charts.css')}}">
@@ -10,10 +10,6 @@
 <script src="{{asset('assets/vendor/libs/apex-charts/apexcharts.js')}}"></script>
 @endsection
 
-@section('page-script')
-<script src="{{asset('assets/js/dashboards-analytics.js')}}"></script>
-@endsection
-
 @section('content')
 <div class="row">
   <div class="col-lg-12 mb-4 order-0">
@@ -21,9 +17,10 @@
       <div class="d-flex align-items-end row">
         <div class="col-sm-7">
           <div class="card-body">
-            <h5 class="card-title text-primary">Hai Admin !</h5>
-            <p class="mb-4">Selamat Datang di Halaman Administrator .</p>
-
+            <h5 class="card-title text-primary">
+              Hai, {{ Auth::guard('admin')->check() ? Auth::guard('admin')->user()->user : 'Admin' }}!
+            </h5>
+            <p class="mb-4">Selamat Datang di Halaman Administrator.</p>
             <a href="javascript:;" class="btn btn-sm btn-outline-primary">View Badges</a>
           </div>
         </div>
@@ -35,5 +32,32 @@
       </div>
     </div>
   </div>
-</div>
+
+  <!-- Statistik -->
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-title">Total Pengguna</h6>
+          <p class="card-text display-4 text-primary">150</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-title">Jumlah Diklat</h6>
+          <p class="card-text display-4 text-success">30</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-title">Aktivitas Terkini</h6>
+          <p class="card-text">5 pengguna baru minggu ini</p>
+        </div>
+      </div>
+    </div>
+  </div>
 @endsection
