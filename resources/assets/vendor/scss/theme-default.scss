@@ -11,13 +11,11 @@ $primary-color: #0A21A6;
 @include template-navbar-style('.bg-navbar-theme', $card-bg, $color: $body-color, $active-color: $headings-color);
 .layout-navbar {
   background-color: rgba($card-bg, 0.95) !important;
-  backdrop-filter: saturate(200%) blur(6px);
 }
 .navbar-detached {
   box-shadow: 0 0 0.375rem 0.25rem rgba(rgba-to-hex($gray-500, $rgba-to-hex-bg), 0.15);
 }
 .layout-navbar-fixed .layout-page:before {
-  backdrop-filter: saturate(200%) blur(10px);
   background: rgba($body-bg, 0.6);
 }
 
