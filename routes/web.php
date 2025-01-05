@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\authentications\LoginController;
 use App\Http\Controllers\DaftarController;
 use App\Http\Controllers\dashboard\Dashboard;
+use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RekapData;
 use App\Http\Controllers\EditDiklat;
@@ -19,6 +21,7 @@ use App\Http\Controllers\pages\MiscUnderMaintenance;
 use App\Http\Controllers\authentications\Login;
 use App\Http\Controllers\authentications\RegisterBasic;
 use App\Http\Controllers\authentications\ForgotPasswordBasic;
+use App\Http\Controllers\authentications\RegisterController;
 use App\Http\Controllers\cards\FotoDiklat;
 use App\Http\Controllers\user_interface\Accordion;
 use App\Http\Controllers\user_interface\Alerts;
@@ -47,20 +50,100 @@ use App\Http\Controllers\form_elements\InputGroups;
 use App\Http\Controllers\form_layouts\VerticalForm;
 use App\Http\Controllers\form_layouts\TambahDiklat;
 use App\Http\Controllers\tables\DataDiklat;
-
-// Main Page Route
-Route::get('/', [Login::class, 'index'])->name('auth-login');
-
-// Rute dashboard 
-Route::get('/dashboard', [Dashboard::class, 'index'])->name('dashboard');
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\DiklatController;
+use App\Http\Controllers\PesertaController;
 
 
-// layout
-Route::get('/layouts/without-menu', [WithoutMenu::class, 'index'])->name('layouts-without-menu');
-Route::get('/layouts/without-navbar', [WithoutNavbar::class, 'index'])->name('layouts-without-navbar');
-Route::get('/layouts/fluid', [Fluid::class, 'index'])->name('layouts-fluid');
-Route::get('/layouts/container', [Container::class, 'index'])->name('layouts-container');
-Route::get('/layouts/blank', [Blank::class, 'index'])->name('layouts-blank');
+// Routes untuk autentikasi
+Route::get('/', [LoginController::class, 'index'])->name('auth-login');
+Route::post('/login', [LoginController::class, 'authenticate'])->name('login');
+
+Route::prefix('auth')->group(function () {
+    Route::get('/forgot-password-administrator', [ForgotPasswordBasic::class, 'index'])->name('auth-reset-password-admin');
+    Route::get('/register-administrator', function () {
+        return view('content.authentications.auth-register-basic');
+    })->name('auth-register-administrator');
+    Route::post('/register-administrator', [RegisterController::class, 'store'])->name('auth.register-admin');
+
+    Route::post('/auth/logout', function () {
+        Auth::logout();
+        session()->invalidate();
+        session()->regenerateToken();
+        return redirect()->route('auth-login');
+    })->name('logout');
+});
+
+// Routes untuk layout (tidak membutuhkan autentikasi)
+Route::prefix('layouts')->group(function () {
+    Route::get('/without-menu', [WithoutMenu::class, 'index'])->name('layouts-without-menu');
+    Route::get('/without-navbar', [WithoutNavbar::class, 'index'])->name('layouts-without-navbar');
+    Route::get('/fluid', [Fluid::class, 'index'])->name('layouts-fluid');
+    Route::get('/container', [Container::class, 'index'])->name('layouts-container');
+    Route::get('/blank', [Blank::class, 'index'])->name('layouts-blank');
+});
+
+
+// Routes untuk cards dan icons (tidak membutuhkan autentikasi)
+Route::get('/foto-diklat', [FotoDiklat::class, 'index'])->name('foto-diklat');
+Route::get('/icons/boxicons', [Boxicons::class, 'index'])->name('icons-boxicons');
+
+// Routes untuk user (tidak membutuhkan autentikasi)
+Route::prefix('users')->group(function () {
+    Route::get('/daftar', function () {
+        return view('users.daftar');
+    })->name('users.daftar');
+
+    Route::get('/form-daftar', function () {
+        return view('users.form-daftar');
+    })->name('users.form-daftar');
+
+    // Ubah dari closure ke controller method
+    Route::get('/index', [UserController::class, 'index'])->name('users.index-u');
+
+    Route::get('/daftar-diklat', [DaftarController::class, 'index'])->name('daftar.diklat');
+});
+
+// Routes yang dilindungi middleware "auth"
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [Dashboard::class, 'index'])->name('dashboard');
+});
+
+// Routes khusus untuk admin dengan middleware "admin"
+Route::middleware(['admin'])->group(function () {
+    Route::get('/dashboard', [Dashboard::class, 'index'])->name('dashboard');
+
+    // Diklat Management Routes
+    Route::prefix('diklat')->group(function () {
+        Route::get('/create', [DiklatController::class, 'create'])->name('diklat.create');
+        Route::post('/store', [DiklatController::class, 'store'])->name('diklat.store');
+        Route::get('/{id}/edit', [DiklatController::class, 'edit'])->name('diklat.edit');
+        Route::put('/{id}/update', [DiklatController::class, 'update'])->name('diklat.update');
+        Route::delete('/{id}/delete', [DiklatController::class, 'destroy'])->name('diklat.destroy');
+
+        // Routes untuk status, pengumuman, dan kuis toggle
+        Route::get('/diklat/{id}/status/{status}', [DiklatController::class, 'updateStatus'])->name('diklat.updateStatus');
+        Route::post('/{id}/pengumuman', [DiklatController::class, 'togglePengumuman'])->name('diklat.pengumuman');
+        Route::post('/{id}/quiz', [DiklatController::class, 'toggleQuiz'])->name('diklat.quiz');
+
+        // Route untuk rekap data
+        Route::get('/{id}/rekap', [DiklatController::class, 'rekapData'])->name('diklat.rekap');
+
+        // Routing untuk peserta
+        Route::get('/{id}/peserta', [PesertaController::class, 'getPesertaByDiklat'])->name('diklat.peserta');
+        Route::post('/peserta/{id}/status', [PesertaController::class, 'updateStatus'])->name('peserta.updateStatus');
+        Route::delete('/peserta/{id}', [PesertaController::class, 'destroy'])->name('peserta.destroy');
+
+        // Route untuk generate sertifikat
+        Route::post('/{id}/generate-certificates', [DiklatController::class, 'generateCertificates'])->name('diklat.generateCertificates');
+    });
+
+    Route::get('/data-diklat', [DataDiklat::class, 'index'])->name('data-diklat');
+    Route::get('/edit-diklat', [EditDiklat::class, 'edit'])->name('edit-diklat');
+    Route::get('/tambah-diklat', [TambahDiklat::class, 'index'])->name('tambah-diklat');
+    Route::get('/form/layouts-vertical', [VerticalForm::class, 'index'])->name('form-layouts-vertical');
+});
+
 
 // pages
 // Route::get('/pages/account-settings-account', [AccountSettingsAccount::class, 'index'])->name('pages-account-settings-account');
@@ -68,13 +151,6 @@ Route::get('/layouts/blank', [Blank::class, 'index'])->name('layouts-blank');
 // Route::get('/pages/account-settings-connections', [AccountSettingsConnections::class, 'index'])->name('pages-account-settings-connections');
 // Route::get('/pages/misc-error', [MiscError::class, 'index'])->name('pages-misc-error');
 // Route::get('/pages/misc-under-maintenance', [MiscUnderMaintenance::class, 'index'])->name('pages-misc-under-maintenance');
-
-// authentication
-Route::get('/auth/register-basic', [RegisterBasic::class, 'index'])->name('auth-register-basic');
-Route::get('/auth/forgot-password-basic', [ForgotPasswordBasic::class, 'index'])->name('auth-reset-password-basic');
-
-// cards
-Route::get('/foto-diklat', [FotoDiklat::class, 'index'])->name('foto-diklat');
 
 // User Interface
 // Route::get('/ui/accordion', [Accordion::class, 'index'])->name('ui-accordion');
@@ -101,32 +177,6 @@ Route::get('/foto-diklat', [FotoDiklat::class, 'index'])->name('foto-diklat');
 // Route::get('/extended/ui-perfect-scrollbar', [PerfectScrollbar::class, 'index'])->name('extended-ui-perfect-scrollbar');
 // Route::get('/extended/ui-text-divider', [TextDivider::class, 'index'])->name('extended-ui-text-divider');
 
-// icons
-Route::get('/icons/boxicons', [Boxicons::class, 'index'])->name('icons-boxicons');
-
 // form elements
 // Route::get('/forms/basic-inputs', [BasicInput::class, 'index'])->name('forms-basic-inputs');
 // Route::get('/forms/input-groups', [InputGroups::class, 'index'])->name('forms-input-groups');
-
-// form layouts
-Route::get('/form/layouts-vertical', [VerticalForm::class, 'index'])->name('form-layouts-vertical');
-Route::get('/tambah-diklat', [TambahDiklat::class, 'index'])->name('tambah-diklat');
-
-// tables
-Route::get('/data-diklat', [DataDiklat::class, 'index'])->name('data-diklat');
-
-
-// Route untuk halaman edit diklat
-Route::get('/edit-diklat', [EditDiklat::class, 'edit'])->name('edit-diklat');
-
-
-Route::get('/rekap-data', [RekapData::class, 'index'])->name('rekap.data');
-
-Route::get('/users', [UserController::class, 'index'])->name('users.index');
-
-
-Route::get('/daftar-diklat', [DaftarController::class, 'index'])->name('daftar.diklat');
-
-Route::get('/form-daftar', function () {
-    return view('users.form-daftar');
-})->name('form.daftar');

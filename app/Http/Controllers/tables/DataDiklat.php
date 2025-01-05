@@ -3,12 +3,18 @@
 namespace App\Http\Controllers\tables;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Diklat;
 
 class DataDiklat extends Controller
 {
-  public function index()
-  {
-    return view('content.tables.data-diklat');
-  }
+    public function index()
+    {
+        // Ambil data diklat dengan pagination
+        $diklats = Diklat::paginate(10);
+
+        // Kirim data ke view
+        return view('content.tables.data-diklat', compact('diklats'));
+    }
 }
+
+

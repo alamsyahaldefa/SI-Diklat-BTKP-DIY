@@ -1,23 +1,24 @@
-$boxicons-font-path: 'boxicons';
-$boxicons-font-size-base: 16px;
+$boxicons-font-path: '/assets/vendor/fonts/boxicons' !default;
 
+// Import Boxicons CSS
 @import '~boxicons/css/boxicons';
 
+// Style for .bx class
 .bx {
   vertical-align: middle;
   font-size: 1.15rem;
   line-height: 1;
 }
-// Override font path
+
+// Override boxicons font-face
 @font-face {
   font-family: 'boxicons';
   font-weight: normal;
   font-style: normal;
-
-  src: url('../fonts/#{$boxicons-font-path}/boxicons.eot');
-  src: url('../fonts/#{$boxicons-font-path}/boxicons.eot') format('embedded-opentype'),
-    url('../fonts/#{$boxicons-font-path}/boxicons.woff2') format('woff2'),
-    url('../fonts/#{$boxicons-font-path}/boxicons.woff') format('woff'),
-    url('../fonts/#{$boxicons-font-path}/boxicons.ttf') format('truetype'),
-    url('../fonts/#{$boxicons-font-path}/boxicons.svg?#boxicons') format('svg');
+  src: url('#{$boxicons-font-path}/boxicons.eot');
+  src: url('#{$boxicons-font-path}/boxicons.eot?#iefix') format('embedded-opentype'),
+       url('#{$boxicons-font-path}/boxicons.woff2') format('woff2'),
+       url('#{$boxicons-font-path}/boxicons.woff') format('woff'),
+       url('#{$boxicons-font-path}/boxicons.ttf') format('truetype'),
+       url('#{$boxicons-font-path}/boxicons.svg?#boxicons') format('svg');
 }

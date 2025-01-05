@@ -1,178 +1,127 @@
 @extends('layouts/contentNavbarLayout')
 
-@section('title', ' Horizontal Layouts - Forms')
+@section('title', ' Tambah Diklat -')
 
 @section('content')
-<h4 class="py-3 mb-4"><span class="text-muted fw-light">Administrator/</span> Tambah Diklat</h4>
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <h3>Tambah Diklat</h3>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-style1">
+      <li class="breadcrumb-item">
+        <a href="{{ route('dashboard') }}">Administrator</a>
+      </li>
+      <li class="breadcrumb-item active">Tambah Diklat</li>
+    </ol>
+  </nav>
+</div>
 
-<!-- Basic Layout & Basic with Icons -->
-<!-- <div class="row"> -->
-  <!-- Basic Layout -->
-  <!-- <div class="col-xxl">
-    <div class="card mb-4">
-      <div class="card-header d-flex align-items-center justify-content-between">
-        <h5 class="mb-0">Basic Layout</h5> <small class="text-muted float-end">Default label</small>
-      </div>
-      <div class="card-body">
-        <form>
-          <div class="row mb-3">
-            <label class="col-sm-2 col-form-label" for="basic-default-name">Name</label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" id="basic-default-name" placeholder="John Doe" />
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label class="col-sm-2 col-form-label" for="basic-default-company">Company</label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" id="basic-default-company" placeholder="ACME Inc." />
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label class="col-sm-2 col-form-label" for="basic-default-email">Email</label>
-            <div class="col-sm-10">
-              <div class="input-group input-group-merge">
-                <input type="text" id="basic-default-email" class="form-control" placeholder="john.doe" aria-label="john.doe" aria-describedby="basic-default-email2" />
-                <span class="input-group-text" id="basic-default-email2">@example.com</span>
-              </div>
-              <div class="form-text"> You can use letters, numbers & periods </div>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label class="col-sm-2 col-form-label" for="basic-default-phone">Phone No</label>
-            <div class="col-sm-10">
-              <input type="text" id="basic-default-phone" class="form-control phone-mask" placeholder="658 799 8941" aria-label="658 799 8941" aria-describedby="basic-default-phone" />
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label class="col-sm-2 col-form-label" for="basic-default-message">Message</label>
-            <div class="col-sm-10">
-              <textarea id="basic-default-message" class="form-control" placeholder="Hi, Do you have a moment to talk Joe?" aria-label="Hi, Do you have a moment to talk Joe?" aria-describedby="basic-icon-default-message2"></textarea>
-            </div>
-          </div>
-          <div class="row justify-content-end">
-            <div class="col-sm-10">
-              <button type="submit" class="btn btn-primary">Send</button>
-            </div>
-          </div>
-        </form>
-      </div>
+@if ($errors->any())
+<div class="alert alert-danger">
+  <ul>
+    @foreach ($errors->all() as $error)
+    <li>{{ $error }}</li>
+    @endforeach
+  </ul>
+</div>
+@endif
+
+<div class="col-xxl">
+  <div class="card mb-4">
+    <div class="card-header d-flex align-items-center justify-content-between">
+      <h5 class="mb-0">Tambah Diklat</h5>
     </div>
-  </div> -->
-  <!-- Basic with Icons -->
-  <div class="col-xxl">
-    <div class="card mb-4">
-      <div class="card-header d-flex align-items-center justify-content-between">
-        <h5 class="mb-0">Tambah Diklat</h5> <small class="text-muted float-end"></small>
-      </div>
-      <div class="card-body">
-        <form>
-          <div class="row mb-3">
-            <label class="col-sm-2 col-form-label" for="basic-icon-default-company">Nama Diklat</label>
-            <div class="col-sm-10">
-              <div class="input-group input-group-merge">
-                <span id="basic-icon-default-company2" class="input-group-text"><i class="bx bx-buildings"></i></span>
-                <input type="text" id="basic-icon-default-company" class="form-control" placeholder="Masukkan Nama DIklat" aria-label="" aria-describedby="basic-icon-default-company2" />
-              </div>
-            </div>
-          </div>
-          <div class="mb-3 row">
-          <label for="html5-date-input" class="col-md-2 col-form-label">Tanggal Mulai</label>
-          <div class="col-md-10">
-            <input class="form-control" type="date" id="html5-date-input" />
-          </div>
-        </div>
-        <div class="mb-3 row">
-          <label for="html5-date-input" class="col-md-2 col-form-label">Tanggal Selesai</label>
-          <div class="col-md-10">
-            <input class="form-control" type="date" id="html5-date-input" />
-          </div>
-        </div>
+    <div class="card-body">
+      <form action="{{ route('diklat.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf
         <div class="row mb-3">
-            <label class="col-sm-2 col-form-label" for="basic-icon-default-fullname">Kuota Peserta</label>
-            <div class="col-sm-10">
-              <div class="input-group input-group-merge">
-                <span id="basic-icon-default-fullname2" class="input-group-text"><i class="bx bx-user"></i></span>
-                <input type="text" class="form-control" placeholder="Masukkan Kuota Peserta"  />
-              </div>
-              <div class="form-text">Format Penulisan: 25 Peserta</div>
+          <label class="col-sm-2 col-form-label" for="nama_diklat">Nama Diklat</label>
+          <div class="col-sm-10">
+            <div class="input-group input-group-merge">
+              <span class="input-group-text"><i class="bx bx-buildings"></i></span>
+              <input type="text" id="nama_diklat" name="nama_diklat"
+                class="form-control @error('nama_diklat') is-invalid @enderror"
+                value="{{ old('nama_diklat') }}" />
             </div>
+            @error('nama_diklat')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
           </div>
-          <div class="row mb-3">
-            <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label">Syarat & Ketentuan</label>
-            <div class="col-sm-10">
-              <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+        </div>
+
+        <div class="row mb-3">
+          <label class="col-sm-2 col-form-label">Periode Diklat</label>
+          <div class="col-sm-5">
+            <input type="date" name="tgl_mulai" class="form-control @error('tgl_mulai') is-invalid @enderror"
+              value="{{ old('tgl_mulai') }}" />
+            @error('tgl_mulai')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+          <div class="col-sm-5">
+            <input type="date" name="tgl_selesai" class="form-control @error('tgl_selesai') is-invalid @enderror"
+              value="{{ old('tgl_selesai') }}" />
+            @error('tgl_selesai')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="col-sm-2 col-form-label" for="kuota">Kuota</label>
+          <div class="col-sm-10">
+            <div class="input-group input-group-merge">
+              <span class="input-group-text"><i class="bx bx-user"></i></span>
+              <input type="number" id="kuota" name="kuota"
+                class="form-control @error('kuota') is-invalid @enderror"
+                value="{{ old('kuota') }}" />
             </div>
+            @error('kuota')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
           </div>
-          <div class="row justify-content-end">
-            <div class="col-sm-10">
-              <button type="submit" class="btn btn-primary">Send</button>
-            </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="col-sm-2 col-form-label">Dokumen</label>
+          <div class="col-sm-10">
+            <input type="file" name="surat" class="form-control @error('surat') is-invalid @enderror" />
+            @error('surat')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+            <div class="form-text">Upload file PDF, DOC, atau DOCX (max: 2MB)</div>
           </div>
-        </form>
-      </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="col-sm-2 col-form-label">Foto</label>
+          <div class="col-sm-10">
+            <input type="file" name="foto" class="form-control @error('foto') is-invalid @enderror" />
+            @error('foto')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+            <div class="form-text">Upload file JPG, JPEG, atau PNG (max: 2MB)</div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="col-sm-2 col-form-label">Syarat & Ketentuan</label>
+          <div class="col-sm-10">
+            <textarea name="syarat" class="form-control @error('syarat') is-invalid @enderror"
+              rows="4">{{ old('syarat') }}</textarea>
+            @error('syarat')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+          </div>
+        </div>
+
+        <div class="row justify-content-end">
+          <div class="col-sm-10">
+            <button type="submit" class="btn btn-primary">Simpan</button>
+            <a href="{{ route('data-diklat') }}" class="btn btn-secondary">Batal</a>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
-    <!-- Basic with Icons -->
-    <!-- <div class="col-xxl">
-    <div class="card mb-4">
-      <div class="card-header d-flex align-items-center justify-content-between">
-        <h5 class="mb-0">Tambah Diklat</h5> <small class="text-muted float-end">pppp</small>
-      </div>
-      <div class="card-body">
-        <form>
-          <div class="row mb-3">
-            <label class="col-sm-2 col-form-label" for="basic-icon-default-fullname">Nama Diklat</label>
-            <div class="col-sm-10">
-              <div class="input-group input-group-merge">
-                <span id="basic-icon-default-fullname2" class="input-group-text"><i class="bx bx-user"></i></span>
-                <input type="text" class="form-control" id="basic-icon-default-fullname" placeholder="John Doe" aria-label="John Doe" aria-describedby="basic-icon-default-fullname2" />
-              </div>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label class="col-sm-2 col-form-label" for="basic-icon-default-company">Company</label>
-            <div class="col-sm-10">
-              <div class="input-group input-group-merge">
-                <span id="basic-icon-default-company2" class="input-group-text"><i class="bx bx-buildings"></i></span>
-                <input type="text" id="basic-icon-default-company" class="form-control" placeholder="ACME Inc." aria-label="ACME Inc." aria-describedby="basic-icon-default-company2" />
-              </div>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label class="col-sm-2 col-form-label" for="basic-icon-default-email">Email</label>
-            <div class="col-sm-10">
-              <div class="input-group input-group-merge">
-                <span class="input-group-text"><i class="bx bx-envelope"></i></span>
-                <input type="text" id="basic-icon-default-email" class="form-control" placeholder="john.doe" aria-label="john.doe" aria-describedby="basic-icon-default-email2" />
-                <span id="basic-icon-default-email2" class="input-group-text">@example.com</span>
-              </div>
-              <div class="form-text"> You can use letters, numbers & periods </div>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label class="col-sm-2 form-label" for="basic-icon-default-phone">Phone No</label>
-            <div class="col-sm-10">
-              <div class="input-group input-group-merge">
-                <span id="basic-icon-default-phone2" class="input-group-text"><i class="bx bx-phone"></i></span>
-                <input type="text" id="basic-icon-default-phone" class="form-control phone-mask" placeholder="658 799 8941" aria-label="658 799 8941" aria-describedby="basic-icon-default-phone2" />
-              </div>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label class="col-sm-2 form-label" for="basic-icon-default-message">Message</label>
-            <div class="col-sm-10">
-              <div class="input-group input-group-merge">
-                <span id="basic-icon-default-message2" class="input-group-text"><i class="bx bx-comment"></i></span>
-                <textarea id="basic-icon-default-message" class="form-control" placeholder="Hi, Do you have a moment to talk Joe?" aria-label="Hi, Do you have a moment to talk Joe?" aria-describedby="basic-icon-default-message2"></textarea>
-              </div>
-            </div>
-          </div>
-          <div class="row justify-content-end">
-            <div class="col-sm-10">
-              <button type="submit" class="btn btn-primary">Send</button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div> -->
+</div>
 @endsection

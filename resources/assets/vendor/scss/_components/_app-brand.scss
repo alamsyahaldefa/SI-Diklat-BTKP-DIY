@@ -5,21 +5,17 @@
 
 .app-brand {
   display: flex;
-  flex-grow: 0;
   flex-shrink: 0;
   overflow: hidden;
   line-height: 1;
   min-height: 1px;
-  align-items: center;
 }
 
 .app-brand-link {
   display: flex;
-  align-items: center;
 }
 .app-brand-logo {
   display: block;
-  flex-grow: 0;
   flex-shrink: 0;
   overflow: hidden;
   min-height: 1px;
