@@ -11,7 +11,7 @@
         <a href="javascript:void(0);">Administrator</a>
       </li>
       <li class="breadcrumb-item">
-        <a onclick="window.location.href='{{ route('data-diklat') }}'">Data Diklat</a>
+        <a href="{{ route('data-diklat') }}">Data Diklat</a>
       </li>
       <li class="breadcrumb-item active">Edit Diklat</li>
     </ol>
@@ -20,67 +20,101 @@
 <div class="col-xxl">
   <div class="card mb-4">
     <div class="card-header d-flex align-items-center justify-content-between">
-      <h5 class="mb-0">Edit Diklat</h5> <small class="text-muted float-end"></small>
+      <h5 class="mb-0">Edit Diklat</h5>
     </div>
     <div class="card-body mt-2">
-      <form>
+      <!-- Form Start -->
+      <form action="{{ route('diklat.update', $diklat->id_diklat) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
+
+        <!-- Tampilkan Error Validasi -->
+        @if ($errors->any())
+        <div class="alert alert-danger">
+          <ul>
+            @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+          </ul>
+        </div>
+        @endif
+
         <!-- Nama Diklat -->
         <div class="row mb-3">
-          <label class="col-sm-2 col-form-label" for="basic-icon-default-company">Nama Diklat</label>
+          <label class="col-sm-2 col-form-label" for="nama_diklat">Nama Diklat</label>
           <div class="col-sm-10">
-            <div class="input-group input-group-merge">
-              <span id="basic-icon-default-company2" class="input-group-text"><i class="bx bx-buildings"></i></span>
-              <input type="text" id="basic-icon-default-company" class="form-control" 
-                placeholder="Masukkan Nama Diklat" value="BIMTEK TEKNOLOGI btkp 2024" 
-                aria-label="" aria-describedby="basic-icon-default-company2" />
-            </div>
+            <input type="text" name="nama_diklat" id="nama_diklat" class="form-control"
+              value="{{ old('nama_diklat', $diklat->nama_diklat) }}" required>
           </div>
         </div>
 
         <!-- Tanggal Mulai -->
-        <div class="mb-3 row">
-          <label for="html5-date-input-start" class="col-md-2 col-form-label">Tanggal Mulai</label>
-          <div class="col-md-10">
-            <input class="form-control" type="date" id="html5-date-input-start" value="2024-11-10" />
+        <div class="row mb-3">
+          <label class="col-sm-2 col-form-label" for="tgl_mulai">Tanggal Mulai</label>
+          <div class="col-sm-10">
+            <input type="date" name="tgl_mulai" id="tgl_mulai" class="form-control"
+              value="{{ old('tgl_mulai', $diklat->tgl_mulai->format('Y-m-d')) }}" required>
           </div>
         </div>
 
         <!-- Tanggal Selesai -->
-        <div class="mb-3 row">
-          <label for="html5-date-input-end" class="col-md-2 col-form-label">Tanggal Selesai</label>
-          <div class="col-md-10">
-            <input class="form-control" type="date" id="html5-date-input-end" value="2024-11-12" />
+        <div class="row mb-3">
+          <label class="col-sm-2 col-form-label" for="tgl_selesai">Tanggal Selesai</label>
+          <div class="col-sm-10">
+            <input type="date" name="tgl_selesai" id="tgl_selesai" class="form-control"
+              value="{{ old('tgl_selesai', $diklat->tgl_selesai->format('Y-m-d')) }}" required>
           </div>
         </div>
 
         <!-- Kuota Peserta -->
         <div class="row mb-3">
-          <label class="col-sm-2 col-form-label" for="basic-icon-default-fullname">Kuota Peserta</label>
+          <label class="col-sm-2 col-form-label" for="kuota">Kuota Peserta</label>
           <div class="col-sm-10">
-            <div class="input-group input-group-merge">
-              <span id="basic-icon-default-fullname2" class="input-group-text"><i class="bx bx-user"></i></span>
-              <input type="text" class="form-control" placeholder="Masukkan Kuota Peserta" value="100 Peserta" />
-            </div>
-            <div class="form-text">Format Penulisan: 25 Peserta</div>
+            <input type="number" name="kuota" id="kuota" class="form-control"
+              value="{{ old('kuota', $diklat->kuota) }}" required>
           </div>
         </div>
 
         <!-- Syarat & Ketentuan -->
         <div class="row mb-3">
-          <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label">Syarat & Ketentuan</label>
+          <label for="syarat" class="col-sm-2 col-form-label">Syarat & Ketentuan</label>
           <div class="col-sm-10">
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3">Syarat dan ketentuan diklat masih perlu diisi...</textarea>
+            <textarea name="syarat" id="syarat" class="form-control" rows="4">{{ old('syarat', $diklat->syarat) }}</textarea>
+          </div>
+        </div>
+
+        <!-- File Surat -->
+        <div class="row mb-3">
+          <label for="surat" class="col-sm-2 col-form-label">File Surat Undangan</label>
+          <div class="col-sm-10">
+            <input type="file" name="surat" id="surat" class="form-control">
+            @if ($diklat->surat)
+            <small>File saat ini: <a href="{{ asset('storage/surat_diklat/' . $diklat->surat) }}" target="_blank">Lihat File</a></small>
+            @endif
+          </div>
+        </div>
+
+        <!-- File Foto -->
+        <div class="row mb-3">
+          <label for="foto" class="col-sm-2 col-form-label">Foto Diklat</label>
+          <div class="col-sm-10">
+            <input type="file" name="foto" id="foto" class="form-control">
+            @if ($diklat->foto)
+            <small>Foto saat ini: <img src="{{ asset('storage/foto_diklat/' . $diklat->foto) }}" alt="Foto Diklat" style="max-height: 100px;"></small>
+            @endif
           </div>
         </div>
 
         <!-- Buttons -->
         <div class="row justify-content-end">
           <div class="col-sm-10">
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='{{ route('data-diklat') }}'">Back</button>
-            <button type="submit" class="btn btn-primary">Send</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='{{ route('data-diklat') }}'">Kembali</button>
+            <button type="submit" class="btn btn-primary">Simpan</button>
           </div>
         </div>
       </form>
+
+      <!-- Form End -->
     </div>
   </div>
 </div>
