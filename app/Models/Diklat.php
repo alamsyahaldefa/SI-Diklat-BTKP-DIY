@@ -62,8 +62,17 @@ class Diklat extends Model
     }
 
     public function scopeDibuka($query)
-{
-    return $query->where('status', 1);
-}
+    {
+        return $query->where('status', 1);
+    }
 
+    public function diklatAktif()
+    {
+        // Ambil data diklat yang statusnya aktif (1) dan urutkan berdasarkan tanggal mulai
+        $diklatAktif = Diklat::where('status', 1)
+            ->orderBy('tgl_mulai', 'asc')
+            ->paginate(10); // Paginasi 10 data per halaman
+
+        return view('diklat-aktif', compact('diklatAktif'));
+    }
 }

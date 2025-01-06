@@ -102,6 +102,9 @@ Route::prefix('users')->group(function () {
     Route::get('/index', [UserController::class, 'index'])->name('users.index-u');
 
     Route::get('/daftar-diklat', [DaftarController::class, 'index'])->name('daftar.diklat');
+
+    Route::get('/users/daftar-diklat/{id}', [UserController::class, 'show'])->name('users.daftar-diklat');
+
 });
 
 // Routes yang dilindungi middleware "auth"
@@ -142,6 +145,8 @@ Route::middleware(['admin'])->group(function () {
     Route::get('/edit-diklat', [EditDiklat::class, 'edit'])->name('edit-diklat');
     Route::get('/tambah-diklat', [TambahDiklat::class, 'index'])->name('tambah-diklat');
     Route::get('/form/layouts-vertical', [VerticalForm::class, 'index'])->name('form-layouts-vertical');
+
+
 });
 
 
