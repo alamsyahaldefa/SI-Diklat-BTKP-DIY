@@ -1,7 +1,7 @@
 @extends('layouts/commonMaster')
 
 @section('layoutContent')
-    @include('layouts.sections.navbar.navbar-user')
+@include('layouts.sections.navbar.navbar-user')
 
 
 <head>
@@ -20,7 +20,8 @@
             margin: 0 auto;
         }
 
-        h1, h3 {
+        h1,
+        h3 {
             font-weight: 700;
         }
 
@@ -105,18 +106,16 @@
                     <h3 class="mb-3 icon-wrapper"><i class='bx bx-id-card'></i> Masukan NIK</h3>
                     <label for="nik" class="form-label fw-bold">NIK (Nomor Induk Kependudukan):</label>
                     <input type="text" id="nik" class="form-control mb-3" placeholder="Masukan NIK Anda (Tanpa Spasi)">
-                    <a href="{{ route('form.daftar') }}" class="btn btn-submit w-100">
+                    <a href="{{ route('users.form-daftar') }}" class="btn btn-submit w-100">
                         <i class='bx bx-send'></i> SUBMIT
                     </a>
-
-                    
                 </div>
             </div>
             <!-- Information Section -->
             <div class="col-md-6">
                 <div class="info-section">
                     <h1 class="mb-3">Diklat yang Akan Anda Ikuti:</h1>
-                    <p class="highlight">Diklat BIMTEK Virtual Reality</p>
+                    <p class="highlight">{{ $diklat->nama_diklat }}</p>
                     <p>
                         Untuk mengikuti bimbingan teknis (bimtek), anda harus menginputkan NIK terlebih dahulu di form bagian kiri.
                         Jika sudah anda inputkan, sistem kami otomatis akan mengecek data NIK anda apakah sudah tersedia atau belum pada database kami.
@@ -133,5 +132,5 @@
 
 
 
-    @include('layouts.sections.footer.footer-user')
+@include('layouts.sections.footer.footer-user')
 @endsection

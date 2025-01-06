@@ -9,11 +9,21 @@ class UserController extends Controller
 {
     public function index()
     {
-        // Ambil diklat yang aktif (status = 1)
-        $diklat = Diklat::where('status', 1)
-                        ->orderBy('tgl_mulai', 'asc')
-                        ->first();
+        // Ambil diklat yang aktif (status = 1) dengan paginasi
+        $diklatAktif = Diklat::where('status', 1)
+            ->orderBy('tgl_mulai', 'asc')
+            ->paginate(10); // Ambil 10 data per halaman
 
-        return view('users.index-u', compact('diklat'));
+        // Kirim data ke view
+        return view('users.index-u', compact('diklatAktif'));
     }
+    public function show($id)
+    {
+        // Ambil data diklat berdasarkan ID
+        $diklat = Diklat::findOrFail($id);
+
+        // Kirimkan data ke view
+        return view('users.daftar', compact('diklat'));
+    }
+
 }

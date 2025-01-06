@@ -25,7 +25,7 @@ class DiklatController extends Controller
         }
 
         $diklat = $diklat->paginate(10); // Pagination table
-        $diklat = Diklat::dibuka()->paginate(10); //Pagination informasi diklat
+
 
     }
 
