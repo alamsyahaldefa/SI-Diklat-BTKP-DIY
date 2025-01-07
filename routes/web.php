@@ -59,9 +59,6 @@ use App\Http\Controllers\PesertaController;
 Route::get('/', [LoginController::class, 'index'])->name('auth-login');
 Route::post('/login', [LoginController::class, 'authenticate'])->name('login');
 
-
-
-
 Route::prefix('auth')->group(function () {
     Route::get('/forgot-password-administrator', [ForgotPasswordBasic::class, 'index'])->name('auth-reset-password-admin');
     Route::get('/register-administrator', function () {
@@ -97,22 +94,17 @@ Route::prefix('users')->group(function () {
         return view('users.daftar');
     })->name('users.daftar');
 
-    Route::get('/daftar/{id}', [DaftarController::class, 'index'])->name('users.daftar');
-    Route::get('/form-daftar', [DaftarController::class, 'formDaftar'])->name('users.form-daftar');
-    Route::post('/form-daftar', [DaftarController::class, 'store'])->name('form.daftar');
-    Route::post('/submit-daftar', [DaftarController::class, 'store'])->name('form.daftar');
-    Route::get('/cek-nik/{nik}', [DaftarController::class, 'cekNik'])->name('cek.nik');
+    Route::get('/form-daftar', function () {
+        return view('users.form-daftar');
+    })->name('users.form-daftar');
 
     // Ubah dari closure ke controller method
     Route::get('/index', [UserController::class, 'index'])->name('users.index-u');
 
     Route::get('/daftar-diklat', [DaftarController::class, 'index'])->name('daftar.diklat');
-    Route::post('/submit-pendaftaran', [DaftarController::class, 'store'])->name('form.daftar');
-
-    Route::post('/diklat/{id_diklat}/peserta/{id_peserta}/approve', [DiklatController::class, 'updatePesertaStatus'])
-    ->name('diklat.peserta.approve');
 
     Route::get('/users/daftar-diklat/{id}', [UserController::class, 'show'])->name('users.daftar-diklat');
+
 });
 
 // Routes yang dilindungi middleware "auth"
@@ -148,6 +140,7 @@ Route::middleware(['admin'])->group(function () {
 
         // Routing untuk peserta
         Route::get('/{id}/peserta', [PesertaController::class, 'getPesertaByDiklat'])->name('diklat.peserta');
+        Route::post('/peserta/{id}/status', [PesertaController::class, 'updateStatus'])->name('peserta.updateStatus');
         Route::delete('/peserta/{id}', [PesertaController::class, 'destroy'])->name('peserta.destroy');
         Route::post('/peserta/{id}/status', [PesertaController::class, 'updateStatus'])->name('peserta.update-status');
         Route::post('/peserta/{id_peserta}/update-status', [DiklatController::class, 'updateStatusPeserta']);

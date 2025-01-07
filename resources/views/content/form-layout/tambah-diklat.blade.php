@@ -81,7 +81,7 @@
           </div>
         </div>
 
-        <div class="row mb-3">
+        <!-- <div class="row mb-3">
           <label class="col-sm-2 col-form-label">Dokumen</label>
           <div class="col-sm-10">
             <input type="file" name="surat" class="form-control @error('surat') is-invalid @enderror" />
@@ -101,7 +101,7 @@
             @enderror
             <div class="form-text">Upload file JPG, JPEG, atau PNG (max: 2MB)</div>
           </div>
-        </div>
+        </div> -->
 
         <div class="row mb-3">
           <label class="col-sm-2 col-form-label">Syarat & Ketentuan</label>

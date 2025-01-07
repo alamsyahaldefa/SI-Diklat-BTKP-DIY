@@ -37,7 +37,7 @@
               <th><strong>No</strong></th>
               <th><strong>Nama Diklat</strong></th>
               <th><strong>Tanggal Diklat</strong></th>
-              <th><strong>Peserta Terdaftar</strong></th>
+              <th><strong>Kuota Peserta</strong></th>
               <th><strong>Status</strong></th>
               <th><strong>Actions</strong></th>
             </tr>

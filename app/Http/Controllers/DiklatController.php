@@ -10,18 +10,23 @@ use Illuminate\Support\Facades\Storage;
 
 class DiklatController extends Controller
 {
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         // Fix query building - current code reassigns $diklat
         $query = $request->input('search');
-        $diklat = Diklat::where('status', 1);
-    
+        $diklat = Diklat::query();
+
+        // Filter status yang dibuka (status = 1)
+
+        $diklat = Diklat::where('status', 1)->first();
+
         if ($query) {
             $diklat->where(function ($q) use ($query) {
                 $q->where('nama_diklat', 'like', "%{$query}%")
-                  ->orWhere('deskripsi', 'like', "%{$query}%");
+                    ->orWhere('deskripsi', 'like', "%{$query}%");
             });
         }
-    
+
         $diklat = $diklat->paginate(10);
         return view('content.tables.diklat', compact('diklat'));
     }
@@ -34,10 +39,10 @@ class DiklatController extends Controller
             ->where('id_diklat', $id)
             ->where('status', 1) // Peserta lolos
             ->get();
-    
+
         return view('content.tables.peserta-lolos', compact('diklat', 'pesertaLolos'));
     }
-    
+
     public function pesertaMendaftar($id)
     {
         $diklat = Diklat::findOrFail($id);
@@ -45,10 +50,10 @@ class DiklatController extends Controller
             ->where('id_diklat', $id)
             ->where('status', 0) // Peserta mendaftar
             ->get();
-    
+
         return view('content.tables.peserta-mendaftar', compact('diklat', 'pesertaMendaftar'));
     }
-    
+
 
 
     public function store(Request $request)
@@ -63,8 +68,22 @@ class DiklatController extends Controller
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $validated['surat'] = $this->handleFileUpload($request, 'surat', 'surat_diklat');
-        $validated['foto'] = $this->handleFileUpload($request, 'foto', 'foto_diklat');
+        // $validated['surat'] = $this->handleFileUpload($request, 'surat', 'surat_diklat');
+        // $validated['foto'] = $this->handleFileUpload($request, 'foto', 'foto_diklat');
+
+        // Menambahkan default value untuk surat dan foto jika kosong
+        $validated['surat'] = '';
+        $validated['foto'] = '';
+
+
+        // Handle upload jika ada file
+        if ($request->hasFile('surat')) {
+            $validated['surat'] = $this->handleFileUpload($request, 'surat', 'surat_diklat');
+        }
+
+        if ($request->hasFile('foto')) {
+            $validated['foto'] = $this->handleFileUpload($request, 'foto', 'foto_diklat');
+        }
 
         $validated += [
             'status' => 1,
@@ -113,6 +132,11 @@ class DiklatController extends Controller
 
     public function updateStatusPeserta(Request $request, $id_peserta)
     {
+        $peserta = PesertaDiklat::findOrFail($id_peserta);
+        $peserta->status = 'lolos';
+        $peserta->save();
+
+        return response()->json(['success' => true]);
         try {
             $peserta = PesertaDiklat::findOrFail($id_peserta);
 
@@ -122,8 +146,8 @@ class DiklatController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => $peserta->status == 1 
-                    ? 'Peserta berhasil diterima ke daftar lolos.' 
+                'message' => $peserta->status == 1
+                    ? 'Peserta berhasil diterima ke daftar lolos.'
                     : 'Peserta berhasil dikembalikan ke daftar pendaftar.',
             ]);
         } catch (\Exception $e) {
@@ -150,65 +174,83 @@ class DiklatController extends Controller
 
     public function rekapData($id)
     {
-        try {
-            Log::info("Accessing rekapData for diklat ID: $id"); // Debug log
-            
-            $diklat = Diklat::findOrFail($id);
-            
-            // Get peserta lolos
-            $pesertaLolos = PesertaDiklat::with('user')
-                ->where('id_diklat', $id)
-                ->where('status', 1)
-                ->get();
-                
-            Log::info("Peserta Lolos count: " . $pesertaLolos->count()); // Debug log
-            Log::info("Peserta Lolos Data: ", $pesertaLolos->toArray());
-            
-            // Get peserta mendaftar
-            $pesertaMendaftar = PesertaDiklat::with('user')
-                ->where('id_diklat', $id)
-                ->where('status', 0)
-                ->get();
-                
-            Log::info("Peserta Mendaftar count: " . $pesertaMendaftar->count()); // Debug log
-            Log::info("Peserta Mendaftar Data: ", $pesertaMendaftar->toArray());
-            
-            // Debug log details of each peserta
-            foreach($pesertaLolos as $p) {
-                Log::info("Lolos - ID: {$p->id_peserta}, Status: {$p->status}, NIK: {$p->nik}");
+        $diklat = Diklat::findOrFail($id);
+
+        $pesertaLolos = PesertaDiklat::with('user')
+            ->where('id_diklat', $id)
+            ->where('status', 'lolos')
+            ->get();
+
+        $pendaftarBaru = PesertaDiklat::with('user')
+            ->where('id_diklat', $id)
+            ->where('status', 'mendaftar')
+            ->get();
+
+        return view('content.tables.rekap-data', [
+            'diklat' => $diklat,
+            'pesertaLolos' => $pesertaLolos,
+            'pendaftarBaru' => $pendaftarBaru
+        ]); {
+            try {
+                Log::info("Accessing rekapData for diklat ID: $id"); // Debug log
+
+                $diklat = Diklat::findOrFail($id);
+
+                // Get peserta lolos
+                $pesertaLolos = PesertaDiklat::with('user')
+                    ->where('id_diklat', $id)
+                    ->where('status', 1)
+                    ->get();
+
+                Log::info("Peserta Lolos count: " . $pesertaLolos->count()); // Debug log
+                Log::info("Peserta Lolos Data: ", $pesertaLolos->toArray());
+
+                // Get peserta mendaftar
+                $pesertaMendaftar = PesertaDiklat::with('user')
+                    ->where('id_diklat', $id)
+                    ->where('status', 0)
+                    ->get();
+
+                Log::info("Peserta Mendaftar count: " . $pesertaMendaftar->count()); // Debug log
+                Log::info("Peserta Mendaftar Data: ", $pesertaMendaftar->toArray());
+
+                // Debug log details of each peserta
+                foreach ($pesertaLolos as $p) {
+                    Log::info("Lolos - ID: {$p->id_peserta}, Status: {$p->status}, NIK: {$p->nik}");
+                }
+
+                foreach ($pesertaMendaftar as $p) {
+                    Log::info("Mendaftar - ID: {$p->id_peserta}, Status: {$p->status}, NIK: {$p->nik}");
+                }
+
+                return view('content.tables.rekap-data', compact('diklat', 'pesertaLolos', 'pesertaMendaftar'));
+            } catch (\Exception $e) {
+                Log::error("Error in rekapData: " . $e->getMessage()); // Debug log
+                return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
             }
-            
-            foreach($pesertaMendaftar as $p) {
-                Log::info("Mendaftar - ID: {$p->id_peserta}, Status: {$p->status}, NIK: {$p->nik}");
-            }
-            
-            return view('content.tables.rekap-data', compact('diklat', 'pesertaLolos', 'pesertaMendaftar'));
-        } catch (\Exception $e) {
-            Log::error("Error in rekapData: " . $e->getMessage()); // Debug log
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
-    
+
+
     public function togglePesertaStatus($id)
     {
         try {
             Log::info("Toggling status for peserta ID: $id"); // Debug log
-            
+
             $peserta = PesertaDiklat::findOrFail($id);
             Log::info("Current status: " . $peserta->status); // Debug log
-            
+
             // Toggle status
             $peserta->status = $peserta->status == 0 ? 1 : 0;
             $peserta->save();
-            
+
             Log::info("New status: " . $peserta->status); // Debug log
-    
+
             $statusText = $peserta->status == 1 ? 'peserta lolos' : 'peserta mendaftar';
             return response()->json([
                 'success' => true,
                 'message' => "Status berhasil diubah menjadi $statusText"
             ]);
-    
         } catch (\Exception $e) {
             Log::error("Error toggling status: " . $e->getMessage()); // Debug log
             return response()->json([
@@ -251,30 +293,28 @@ class DiklatController extends Controller
     }
 
     public function showForUser()
-{
-    $diklat = Diklat::where('status', 1)->get();
+    {
+        $diklat = Diklat::where('status', 1)->get();
 
-    return view('user.main', compact('diklat'));
-}
+        return view('user.main', compact('diklat'));
+    }
 
-public function batalkanPeserta($id)
-{
-    $peserta = PesertaDiklat::findOrFail($id);
-    $peserta->status = 'mendaftar';
-    $peserta->save();
-    
-    return response()->json(['success' => true]);
-}
+    public function batalkanPeserta($id)
+    {
+        $peserta = PesertaDiklat::findOrFail($id);
+        $peserta->status = 'mendaftar';
+        $peserta->save();
 
-public function updateSertifikat($id)
-{
-    $peserta = PesertaDiklat::findOrFail($id);
-    $peserta->sertifikat_diambil = true;
-    $peserta->tanggal_ambil_sertifikat = now();
-    $peserta->save();
-    
-    return response()->json(['success' => true]);
-}
+        return response()->json(['success' => true]);
+    }
 
+    public function updateSertifikat($id)
+    {
+        $peserta = PesertaDiklat::findOrFail($id);
+        $peserta->sertifikat_diambil = true;
+        $peserta->tanggal_ambil_sertifikat = now();
+        $peserta->save();
 
+        return response()->json(['success' => true]);
+    }
 }
