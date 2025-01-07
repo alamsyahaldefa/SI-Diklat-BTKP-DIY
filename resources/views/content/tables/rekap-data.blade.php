@@ -28,15 +28,44 @@
             <h5 class="mb-0"><i class="bx bx-info-circle"></i> Detail Info Diklat</h5>
         </div>
         <div class="card-body">
-            <p><strong>Nama Diklat:</strong> {{ $diklat->nama_diklat }}</p>
-            <p><strong>Tanggal Diklat:</strong> 
-                {{ \Carbon\Carbon::parse($diklat->tgl_mulai)->format('d M Y') }} s/d {{ \Carbon\Carbon::parse($diklat->tgl_selesai)->format('d M Y') }}
-            </p>
-            <p><strong>Kuota:</strong> {{ $diklat->kuota }}</p>
-            <p><strong>Status Diklat:</strong> 
-                {{ $diklat->status ? 'Pendaftaran Masih Dibuka' : 'Pendaftaran Sudah Ditutup' }}
-            </p>
-            <p><strong>Jumlah Pendaftar:</strong> {{ $pesertaMendaftar->count() }}</p>
+            <div class="row mb-2">
+                <div class="col-md-3"><strong>Nama Diklat:</strong></div>
+                <div class="col-md-9">{{ $diklat->nama_diklat }}</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-3"><strong>Tanggal Diklat:</strong></div>
+                <div class="col-md-9">
+                    {{ \Carbon\Carbon::parse($diklat->tgl_mulai)->format('d M Y') }} s/d {{ \Carbon\Carbon::parse($diklat->tgl_selesai)->format('d M Y') }}
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-3"><strong>Kuota:</strong></div>
+                <div class="col-md-9">{{ $diklat->kuota }}</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-3"><strong>Status Diklat:</strong></div>
+                <div class="col-md-9">{{ $diklat->status ? 'Pendaftaran Masih Dibuka' : 'Pendaftaran Sudah Ditutup' }}</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-3"><strong>Jumlah Pendaftar:</strong></div>
+                <div class="col-md-9">{{ $pesertaMendaftar->count() }}</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-3"><strong>Status Pengumuman:</strong></div>
+                <div class="col-md-9">
+                    <small>{{ $diklat->pengumuman ? 'Pengumuman Sudah Diterbitkan' : 'Pengumuman Belum Diterbitkan' }}</small>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-3"><strong>File Surat Undangan:</strong></div>
+                <div class="col-md-9"><small>{{ $diklat->surat ? 'Ada' : 'Belum ada' }}</small></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-3"><strong>Syarat dan Ketentuan:</strong></div>
+                <div class="col-md-9">
+                    <textarea class="form-control" rows="4" readonly>{{ $diklat->syarat ?? 'Tidak ada syarat dan ketentuan yang tersedia.' }}</textarea>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -81,16 +110,16 @@
                             <td class="actions">
                                 <div class="d-flex gap-2">
                                     <!-- Tombol "Tolak" -->
-                                    <button 
-                                        class="btn btn-danger btn-sm btn-update-status" 
-                                        data-id="{{ $peserta->id_peserta }}" 
+                                    <button
+                                        class="btn btn-danger btn-sm btn-update-status"
+                                        data-id="{{ $peserta->id_peserta }}"
                                         data-status="0">
                                         <i class="bx bx-x-circle"></i> Tolak
                                     </button>
 
                                     <!-- Tombol "Lihat Sertifikasi" -->
-                                    <button 
-                                        class="btn btn-primary btn-sm btn-sertifikasi" 
+                                    <button
+                                        class="btn btn-primary btn-sm btn-sertifikasi"
                                         data-id="{{ $peserta->id_peserta }}">
                                         <i class="bx bx-book"></i> Lihat Sertifikasi
                                     </button>
@@ -130,9 +159,9 @@
                             <td class="actions">
                                 <div class="d-flex gap-2">
                                     <!-- Tombol "Terima" -->
-                                    <button 
-                                        class="btn btn-success btn-sm btn-update-status" 
-                                        data-id="{{ $peserta->id_peserta }}" 
+                                    <button
+                                        class="btn btn-success btn-sm btn-update-status"
+                                        data-id="{{ $peserta->id_peserta }}"
                                         data-status="1">
                                         <i class="bx bx-check-circle"></i> Terima
                                     </button>
@@ -152,75 +181,77 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    document.addEventListener('DOMContentLoaded', function() {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
-    // Dropdown untuk filter
-    const filterPeserta = document.getElementById('filterPeserta');
-    const lolosTable = document.getElementById('lolosTable');
-    const mendaftarTable = document.getElementById('mendaftarTable');
+        // Dropdown untuk filter
+        const filterPeserta = document.getElementById('filterPeserta');
+        const lolosTable = document.getElementById('lolosTable');
+        const mendaftarTable = document.getElementById('mendaftarTable');
 
-    filterPeserta.addEventListener('change', function () {
-        if (filterPeserta.value === 'lolos') {
-            lolosTable.style.display = 'block';
-            mendaftarTable.style.display = 'none';
-        } else {
-            lolosTable.style.display = 'none';
-            mendaftarTable.style.display = 'block';
-        }
-    });
+        filterPeserta.addEventListener('change', function() {
+            if (filterPeserta.value === 'lolos') {
+                lolosTable.style.display = 'block';
+                mendaftarTable.style.display = 'none';
+            } else {
+                lolosTable.style.display = 'none';
+                mendaftarTable.style.display = 'block';
+            }
+        });
 
-    // Event listener untuk tombol update status
-    document.querySelectorAll('.btn-update-status').forEach(button => {
-        button.addEventListener('click', function () {
-            const idPeserta = this.dataset.id;
-            const status = this.dataset.status;
+        // Event listener untuk tombol update status
+        document.querySelectorAll('.btn-update-status').forEach(button => {
+            button.addEventListener('click', function() {
+                const idPeserta = this.dataset.id;
+                const status = this.dataset.status;
 
-            Swal.fire({
-                title: `Apakah Anda yakin ingin ${status == 1 ? 'menerima' : 'menolak'} peserta ini?`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Ya, Lanjutkan',
-                cancelButtonText: 'Batal',
-                reverseButtons: true,
-            }).then(result => {
-                if (result.isConfirmed) {
-                    fetch(`/diklat/peserta/${idPeserta}/update-status`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken,
-                        },
-                        body: JSON.stringify({ status }),
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire({
-                                title: 'Berhasil!',
-                                text: data.message,
-                                icon: 'success',
-                            }).then(() => location.reload());
-                        } else {
-                            Swal.fire({
-                                title: 'Error!',
-                                text: data.message,
-                                icon: 'error',
+                Swal.fire({
+                    title: `Apakah Anda yakin ingin ${status == 1 ? 'menerima' : 'menolak'} peserta ini?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Lanjutkan',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true,
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        fetch(`/diklat/peserta/${idPeserta}/update-status`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken,
+                                },
+                                body: JSON.stringify({
+                                    status
+                                }),
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire({
+                                        title: 'Berhasil!',
+                                        text: data.message,
+                                        icon: 'success',
+                                    }).then(() => location.reload());
+                                } else {
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: data.message,
+                                        icon: 'error',
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error(error);
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Terjadi kesalahan saat memproses permintaan.',
+                                    icon: 'error',
+                                });
                             });
-                        }
-                    })
-                    .catch(error => {
-                        console.error(error);
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Terjadi kesalahan saat memproses permintaan.',
-                            icon: 'error',
-                        });
-                    });
-                }
+                    }
+                });
             });
         });
     });
-});
 </script>
 @endsection
