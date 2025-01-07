@@ -1,9 +1,9 @@
 @extends('layouts/contentNavbarLayout')
 
 @section('title', 'Rekap Data Diklat -')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
 @section('content')
-
 <div class="d-flex justify-content-between align-items-center mb-2">
     <h3>Rekap Data Diklat</h3>
     <nav aria-label="breadcrumb">
@@ -19,13 +19,12 @@
     </nav>
 </div>
 
-<div class="col-xxl mb-3">
-    <div class="card mb-0">
+<div class="col-xxl">
+    <div class="card mb-4">
         <div class="card-header d-flex align-items-center justify-content-between">
             <h5 class="mb-0"><i class="bx bx-info-circle"></i> Detail Info Diklat</h5>
         </div>
-        <hr class="mt-0 mb-0">
-        </hr>
+        <hr class="mt-0 mb-0"></hr>
         <div class="card-body">
             <div class="row mb-3">
                 <div class="col-md-3">
@@ -58,7 +57,7 @@
                     <p class="mb-0"><strong>Kuota:</strong></p>
                 </div>
                 <div class="col-md-9">
-                    <p class="mb-0"><small>{{ $diklat->kuota ?? 'Tidak ada' }} Peserta</small></p>
+                    <p class="mb-0"><small>{{ $diklat->kuota }}</small></p>
                 </div>
             </div>
 
@@ -68,7 +67,7 @@
                 </div>
                 <div class="col-md-9">
                     <p class="mb-0">
-                        <small>{{ $diklat->pesertaMendaftar->count() }} Pendaftar</small>
+                        <small>{{ $diklat->peserta()->where('status', 0)->count() }} Pendaftar</small>
                     </p>
                 </div>
             </div>
@@ -120,690 +119,310 @@
                     </p>
                 </div>
             </div>
+        </div>
+    </div>
 
+    <div class="card">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="mb-0"><i class="bx bx-info-circle"></i> Data Peserta Diklat</h5>
+        </div>
+        <hr class="mt-0 mb-0"></hr>
+        <div class="card-body">
+            <!-- Button Filter Peserta -->
+            <div class="row mb-3">
+                <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                    <input type="radio" class="btn-check" name="btnToggle" id="btnLolos" autocomplete="off" checked>
+                    <label class="btn btn-outline-dark" for="btnLolos">Peserta Lolos</label>
 
-            <div class="col-xxl mb-3">
-                <div class="card mb-0">
-                    <div class="card-header d-flex align-items-center justify-content-between">
-                        <h5 class="mb-0"><i class="bx bx-info-circle"></i> Data Peserta Diklat</h5>
-                    </div>
-                    <hr class="mt-0 mb-0">
-                    </hr>
-                    <div class="card-body">
-                        <!-- Button Filter Peserta -->
-                        <div class="row mb-3">
-                            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                                <input type="radio" class="btn-check" name="btnToggle" id="btnLolos" autocomplete="off" checked
-                                    onclick="toggleTable('lolos')">
-                                <label class="btn btn-outline-dark" for="btnLolos">Peserta Lolos</label>
-
-                                <input type="radio" class="btn-check" name="btnToggle" id="btnMendaftar" autocomplete="off"
-                                    onclick="toggleTable('mendaftar')">
-                                <label class="btn btn-outline-dark" for="btnMendaftar">Peserta Mendaftar</label>
-                            </div>
-                        </div>
-
-                        <!-- Tabel Peserta Lolos -->
-                        <div id="lolosTable" class="card">
-                            <div class="table-responsive">
-                                <table class="table table-hover w-100">
-                                    <thead>
-                                        <tr>
-                                            <th><strong>No</strong></th>
-                                            <th><strong>Nama Peserta</strong></th>
-                                            <th><strong>Status</strong></th>
-                                            <th><strong>Email</strong></th>
-                                            <th><strong>Telp</strong></th>
-                                            <th><strong>Aksi</strong></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="table-border-bottom-0">
-                                        <!-- Row 1 -->
-                                        <tr>
-                                            <td><small>1</small></td>
-                                            <td>
-                                                <span style="font-weight: bold; color: var(--bs-secondary);">Bapa Budi
-                                                    Satu</span><br>
-                                                <span>
-                                                    <small>Jabatan Mengajar: </small><small class="jabatan">Guru Muda</small>
-                                                </span><br>
-                                                <span>
-                                                    <small>dari: </small><small class="asal-sekolah">SMKN 1 Jogja
-                                                        (Yogyakarta)</small>
-                                                </span>
-                                            </td>
-                                            <td><small>PNS</small></td>
-                                            <td><small>budisatu@gmail.com</small></td>
-                                            <td><small>08123456789</small></td>
-
-                                            <td class="actions">
-                                                <div class="d-flex gap-0 justify-content-start">
-
-
-                                                    <!-- Tombol Hapus Diklat -->
-                                                    <a href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Batalkan Peserta" id="hapusPesertaBtn1">
-                                                        <i class="bx bx-x-circle"></i>
-                                                    </a>
-
-                                                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                                                    <script>
-                                                        document.getElementById('hapusPesertaBtn1').addEventListener('click', function() {
-                                                            Swal.fire({
-                                                                title: "Apakah yakin anda akan membatalkan peserta ini untuk lolos diklat?",
-                                                                text: "Peserta ini akan dikembalikan ke data pendaftar",
-                                                                icon: "warning",
-                                                                showCancelButton: true,
-                                                                confirmButtonColor: "#d33",
-                                                                cancelButtonColor: "#6c757d",
-                                                                confirmButtonText: "Ya, Batalkan!",
-                                                                cancelButtonText: "Kembali",
-                                                                reverseButtons: true
-                                                            }).then((result) => {
-                                                                if (result.isConfirmed) {
-                                                                    Swal.fire({
-                                                                        title: "Deleted!",
-                                                                        text: "Peserta telah dibatalkan.",
-                                                                        icon: "success"
-                                                                    });
-                                                                }
-                                                            });
-                                                        });
-                                                    </script>
-
-                                                    <!-- Button sertif -->
-                                                    <a href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Mengambil Sertifikat" id="SertifBtn">
-                                                        <i class="bx bx-book"></i>
-                                                    </a>
-                                                    <script>
-                                                        document.getElementById('SertifBtn').addEventListener('click', function() {
-                                                            Swal.fire({
-                                                                title: "Apakah yakin anda bahwa peserta ini sudah mengambil sertifikat?",
-                                                                text: "Data Pengambilan akan diset menjadi sudah diterima",
-                                                                icon: "warning",
-                                                                showCancelButton: true,
-                                                                confirmButtonColor: "#d33",
-                                                                cancelButtonColor: "#6c757d",
-                                                                confirmButtonText: "Ya, Sudah!",
-                                                                cancelButtonText: "Kembali",
-                                                                reverseButtons: true
-                                                            }).then((result) => {
-                                                                if (result.isConfirmed) {
-                                                                    Swal.fire({
-                                                                        title: "Deleted!",
-                                                                        text: "Peserta telah dibatalkan.",
-                                                                        icon: "success"
-                                                                    });
-                                                                }
-                                                            });
-                                                        });
-                                                    </script>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <!-- Row 2 -->
-                                        <tr>
-                                            <td><small>2</small></td>
-                                            <td>
-                                                <span style="font-weight: bold; color: var(--bs-secondary);">Bapa Budi
-                                                    Dua</span><br>
-                                                <span>
-                                                    <small>Jabatan Mengajar: </small><small class="jabatan">Guru Muda</small>
-                                                </span><br>
-                                                <span>
-                                                    <small>dari: </small><small class="asal-sekolah">SMKN 1 Nglipar
-                                                        (Gunungkidul)</small>
-                                                </span>
-                                            </td>
-
-                                            <td><small>PNS</small></td>
-                                            <td><small>budidua@gmail.com</small></td>
-                                            <td><small>08123456789</small></td>
-
-                                            <td class="actions">
-                                                <div class="d-flex gap-0 justify-content-start">
-
-
-                                                    <!-- Tombol Hapus Diklat -->
-                                                    <a href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Batalkan Peserta" id="hapusPesertaBtn2">
-                                                        <i class="bx bx-x-circle"></i>
-                                                    </a>
-
-                                                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                                                    <script>
-                                                        document.getElementById('hapusPesertaBtn2').addEventListener('click', function() {
-                                                            Swal.fire({
-                                                                title: "Apakah yakin anda akan membatalkan peserta ini untuk lolos diklat?",
-                                                                text: "Peserta ini akan dikembalikan ke data pendaftar",
-                                                                icon: "warning",
-                                                                showCancelButton: true,
-                                                                confirmButtonColor: "#d33",
-                                                                cancelButtonColor: "#6c757d",
-                                                                confirmButtonText: "Ya, Batalkan!",
-                                                                cancelButtonText: "Kembali",
-                                                                reverseButtons: true
-                                                            }).then((result) => {
-                                                                if (result.isConfirmed) {
-                                                                    Swal.fire({
-                                                                        title: "Deleted!",
-                                                                        text: "Peserta telah dibatalkan.",
-                                                                        icon: "success"
-                                                                    });
-                                                                }
-                                                            });
-                                                        });
-                                                    </script>
-
-                                                    <!-- Button sertif -->
-                                                    <a href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Mengambil Sertifikat" id="SertifBtn2">
-                                                        <i class="bx bx-book"></i>
-                                                    </a>
-                                                    <script>
-                                                        document.getElementById('SertifBtn2').addEventListener('click', function() {
-                                                            Swal.fire({
-                                                                title: "Apakah yakin anda bahwa peserta ini sudah mengambil sertifikat?",
-                                                                text: "Data Pengambilan akan diset menjadi sudah diterima",
-                                                                icon: "warning",
-                                                                showCancelButton: true,
-                                                                confirmButtonColor: "#d33",
-                                                                cancelButtonColor: "#6c757d",
-                                                                confirmButtonText: "Ya, Sudah!",
-                                                                cancelButtonText: "Kembali",
-                                                                reverseButtons: true
-                                                            }).then((result) => {
-                                                                if (result.isConfirmed) {
-                                                                    Swal.fire({
-                                                                        title: "Deleted!",
-                                                                        text: "Peserta telah dibatalkan.",
-                                                                        icon: "success"
-                                                                    });
-                                                                }
-                                                            });
-                                                        });
-                                                    </script>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <style>
-                            /* Atur lebar kolom */
-                            #mendaftarTable table.table th,
-                            #mendaftarTable table.table td {
-                                vertical-align: middle;
-                                /* Selaraskan isi di tengah secara vertikal */
-                            }
-
-                            #mendaftarTable table.table th {
-                                text-align: start;
-                                /* Teks header rata tengah */
-                            }
-
-                            #mendaftarTable table.table .w-30 {
-                                width: 30%;
-                                /* Kolom nama peserta */
-                            }
-
-                            #mendaftarTable table.table .w-10 {
-                                width: 10%;
-                                /* Kolom status, tanggal daftar, aksi, tandai */
-                            }
-
-                            #mendaftarTable table.table .small-col {
-                                text-align: center;
-                                /* Elemen kecil rata tengah */
-                            }
-
-                            #mendaftarTable .table-responsive {
-                                overflow-x: auto;
-                                /* Agar tabel tetap responsif */
-                            }
-
-                            /* Font-size 10px untuk kolom Nama Peserta dan Diklat yang Pernah Diikuti */
-                            #mendaftarTable td:nth-child(2) {
-                                font-size: 13px;
-                            }
-
-                            #mendaftarTable td:nth-child(5) {
-                                font-size: 12px;
-                                /* Ukuran font kecil */
-                                color: black;
-                            }
-
-                            /* Font-size 13px untuk kolom selain Nama Peserta dan Diklat yang Pernah Diikuti */
-                            #mendaftarTable td:not(:nth-child(2)):not(:nth-child(5)) {
-                                font-size: 13px;
-                                /* Ukuran font standar */
-                            }
-
-                            /* Checkbox rata tengah */
-                            #mendaftarTable .form-check {
-                                display: flex;
-                                justify-content: center;
-                            }
-
-                            /* Tambahkan outline pada checkbox */
-                            #mendaftarTable .form-check-input {
-                                width: 18px;
-                                /* Ukuran lebih besar agar lebih terlihat */
-                                height: 18px;
-                                outline: 2px solid #ccc;
-                                /* Outline tambahan */
-                            }
-
-                            /* Hover efek pada checkbox */
-                            #mendaftarTable .form-check-input:hover {
-                                border-color: #0a58ca;
-                                /* Warna lebih gelap saat hover */
-                                outline-color: grey;
-                                /* Outline saat hover */
-                            }
-
-                            /* Wrapper untuk dropdown dengan ikon */
-                            .dropdown-with-icon {
-                                position: relative;
-                            }
-
-                            /* Posisi ikon toga */
-                            .dropdown-with-icon .dropdown-icon {
-                                position: absolute;
-                                top: 50%;
-                                transform: translateY(-50%);
-                                font-size: 1.5rem;
-                                pointer-events: none;
-                                /* Supaya tidak mengganggu klik pada dropdown */
-                            }
-
-                            /* Tambahkan padding kiri pada dropdown agar tidak bertumpuk dengan ikon */
-                            .dropdown-with-icon select {
-                                padding-left: 2.5rem;
-                            }
-                        </style>
-
-
-                        <!-- Tabel Peserta Mendaftar -->
-                        <div id="mendaftarTable" class="card">
-                            <div class="table-responsive">
-                                <table class="table table-hover w-100">
-                                    <thead>
-                                        <tr>
-                                            <th><strong>No</strong></th>
-                                            <th class="w-30"><strong>Nama Peserta</strong></th>
-                                            <th class="w-10"><strong>Status</strong></th>
-                                            <th class="w-10"><strong>Tanggal Daftar</strong></th>
-                                            <th class="w-30"><strong>Diklat yang Pernah Diikuti</strong></th>
-                                            <th class="w-10"><strong>Aksi</strong></th>
-                                            <th class="w-10"><strong>Tandai</strong></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="table-border-bottom-0">
-                                        <!-- Row 1 -->
-                                        <tr>
-                                            <td><small>1</small></td>
-                                            <td>
-                                                <span style="font-weight: bold; color: var(--bs-secondary);">Bapa Budi
-                                                    Satu</span><br>
-                                                <span>
-                                                    <small>Jabatan Mengajar: </small><small class="jabatan">Guru Muda</small>
-                                                </span><br>
-                                                <span>
-                                                    <small>dari: </small><small class="asal-sekolah">SMKN 1 Jogja
-                                                        (Yogyakarta)</small>
-                                                </span>
-                                            </td>
-                                            <td><small>PNS</small></td>
-                                            <td><small>08 Nov 2024</small></td>
-                                            <td><small>
-                                                    - (2021) Pendataan Ulang Peserta Bimbingan Teknis Produksi Media Pembelajaran
-                                                    Berbasis Video
-                                                    Angkatan 2
-                                                    - BIMTEK ONLINE PEMANFAATAN TIK. Angkatan 1 Tahun 2023</small></td>
-
-                                            <td class="actions">
-                                                <div class="d-flex gap-0 justify-content-start">
-
-                                                    <!-- Tombol Hapus Diklat -->
-                                                    <a href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Batalkan Peserta" id="btnPeserta1">
-                                                        <i class="bx bx-x-circle"></i>
-                                                    </a>
-
-                                                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                                                    <script>
-                                                        const hapusPesertaBtn = document.getElementById('btnPeserta1');
-                                                        const hapusPesertaIcon = hapusPesertaBtn.querySelector('i');
-
-                                                        hapusPesertaBtn.addEventListener('click', function() {
-                                                            if (hapusPesertaIcon.classList.contains('bx-x-circle')) {
-                                                                // SweetAlert untuk konfirmasi pembatalan
-                                                                Swal.fire({
-                                                                    title: "Apakah yakin anda akan membatalkan peserta ini untuk lolos diklat?",
-                                                                    text: "Peserta ini akan dikembalikan ke data pendaftar",
-                                                                    icon: "warning",
-                                                                    showCancelButton: true,
-                                                                    confirmButtonColor: "#d33",
-                                                                    cancelButtonColor: "#6c757d",
-                                                                    confirmButtonText: "Ya, Batalkan!",
-                                                                    cancelButtonText: "Kembali",
-                                                                    reverseButtons: true
-                                                                }).then((result) => {
-                                                                    if (result.isConfirmed) {
-                                                                        // Ubah ikon ke centang circle
-                                                                        hapusPesertaIcon.classList.replace('bx-x-circle', 'bx-check-circle');
-                                                                        hapusPesertaBtn.setAttribute('title', 'Terima Peserta');
-                                                                        Swal.fire({
-                                                                            title: "Berhasil!",
-                                                                            text: "Peserta telah dibatalkan.",
-                                                                            icon: "success"
-                                                                        });
-                                                                    }
-                                                                });
-                                                            } else if (hapusPesertaIcon.classList.contains('bx-check-circle')) {
-                                                                // SweetAlert untuk konfirmasi penerimaan peserta
-                                                                Swal.fire({
-                                                                    title: "Apakah yakin anda akan menerima peserta ini untuk lolos diklat?",
-                                                                    text: "Peserta ini akan masuk ke data lolos seleksi",
-                                                                    icon: "question",
-                                                                    showCancelButton: true,
-                                                                    confirmButtonColor: "#28a745",
-                                                                    cancelButtonColor: "#6c757d",
-                                                                    confirmButtonText: "Ya, Terima!",
-                                                                    cancelButtonText: "Kembali",
-                                                                    reverseButtons: true
-                                                                }).then((result) => {
-                                                                    if (result.isConfirmed) {
-                                                                        // Ubah ikon kembali ke x-circle
-                                                                        hapusPesertaIcon.classList.replace('bx-check-circle', 'bx-x-circle');
-                                                                        hapusPesertaBtn.setAttribute('title', 'Batalkan Peserta');
-                                                                        Swal.fire({
-                                                                            title: "Berhasil!",
-                                                                            text: "Peserta telah diterima.",
-                                                                            icon: "success"
-                                                                        });
-                                                                    }
-                                                                });
-                                                            }
-                                                        });
-                                                    </script>
-
-
-                                                    <!-- Button edit -->
-                                                    <a href="javascript:void(0);" data-bs-toggle="modal"
-                                                        data-bs-target="#modalEditDiklatPeserta" title="Edit Diklat Peserta">
-                                                        <i class="bx bx-edit"></i>
-                                                    </a>
-
-                                                    <div class="modal fade" id="modalEditDiklatPeserta" tabindex="-1"
-                                                        aria-hidden="true">
-                                                        <div class="modal-dialog modal-dialog-centered" role="document">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title" id="modalEditDiklatPesertaTitle">Edit
-                                                                        Diklat Peserta</h5>
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                        aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <div class="row mb-3">
-                                                                        <div class="col-12">
-                                                                            <label for="namaPeserta" class="form-label">Nama
-                                                                                Peserta</label>
-                                                                            <input type="text" class="form-control" id="namaPeserta"
-                                                                                value="Bapa Budi Satu" readonly />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row mb-3">
-                                                                        <div class="col-12">
-                                                                            <label for="asalSekolahPeserta" class="form-label">Asal
-                                                                                Sekolah</label>
-                                                                            <input type="text" class="form-control"
-                                                                                id="asalSekolahPeserta"
-                                                                                value="SMKN 1 Jogja (Yogyakarta)" readonly />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row mb-3">
-                                                                        <div class="col">
-                                                                            <label for="pilihDiklatPeserta" class="form-label">Pilih
-                                                                                Diklat</label>
-                                                                            <div class="dropdown-with-icon">
-                                                                                <i class="bx bxs-graduation dropdown-icon"></i>
-                                                                                <select class="form-select ps-5"
-                                                                                    id="pilihDiklatPeserta">
-                                                                                    <option selected value="diklat-sebelumnya">
-                                                                                        Pendataan Ulang Peserta BIMTEK Produksi
-                                                                                        Media Pembelajaran Video</option>
-                                                                                    <option value="diklat-1">BIMTEK Online
-                                                                                        Pemanfaatan TIK Tahun 2023</option>
-                                                                                    <option value="diklat-2">Pelatihan Pengelolaan
-                                                                                        Sistem Informasi Sekolah</option>
-                                                                                    <option value="diklat-3">Workshop Desain Media
-                                                                                        Pembelajaran Interaktif</option>
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="button"
-                                                                        class="btn rounded-pill btn-outline-secondary"
-                                                                        data-bs-dismiss="modal">Tutup</button>
-                                                                    <button type="button"
-                                                                        class="btn rounded-pill btn-outline-primary">Simpan
-                                                                        Perubahan</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div id="mendaftarTable">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" value=""
-                                                            id="defaultCheck1" />
-                                                        <label class="form-check-label" for="defaultCheck1"></label>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <!-- Row 2 -->
-                                        <tr>
-                                            <td><small>2</small></td>
-                                            <td>
-                                                <span style="font-weight: bold; color: var(--bs-secondary);">Bapa Budi
-                                                    Dua</span><br>
-                                                <span>
-                                                    <small>Jabatan Mengajar: </small><small class="jabatan">Guru Muda</small>
-                                                </span><br>
-                                                <span>
-                                                    <small>dari: </small><small class="asal-sekolah">SMKN 1 Nglipar
-                                                        (Gunungkidul)</small>
-                                                </span>
-                                            </td>
-                                            <td><small>PNS</small></td>
-                                            <td><small>17 Aug 2024</small></td>
-                                            <td><small>
-                                                    - (2021) Pendataan Ulang Peserta Bimbingan Teknis Produksi Media Pembelajaran
-                                                    Berbasis Video Angkatan 2
-                                                    - BIMTEK ONLINE PEMANFAATAN TIK. Angkatan 1 Tahun 2023</small></td>
-                                            <td class="actions">
-                                                <div class="d-flex gap-0 justify-content-start">
-                                                    <!-- Tombol Hapus Diklat -->
-                                                    <a href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Batalkan Peserta" id="btnPeserta2">
-                                                        <i class="bx bx-x-circle"></i>
-                                                    </a>
-
-                                                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                                                    <script>
-                                                        const hapusPesertaBtn = document.getElementById('btnPeserta2');
-                                                        const hapusPesertaIcon = hapusPesertaBtn.querySelector('i');
-
-                                                        hapusPesertaBtn.addEventListener('click', function() {
-                                                            if (hapusPesertaIcon.classList.contains('bx-x-circle')) {
-                                                                // SweetAlert untuk konfirmasi pembatalan
-                                                                Swal.fire({
-                                                                    title: "Apakah yakin anda akan membatalkan peserta ini untuk lolos diklat?",
-                                                                    text: "Peserta ini akan dikembalikan ke data pendaftar",
-                                                                    icon: "warning",
-                                                                    showCancelButton: true,
-                                                                    confirmButtonColor: "#d33",
-                                                                    cancelButtonColor: "#6c757d",
-                                                                    confirmButtonText: "Ya, Batalkan!",
-                                                                    cancelButtonText: "Kembali",
-                                                                    reverseButtons: true
-                                                                }).then((result) => {
-                                                                    if (result.isConfirmed) {
-                                                                        // Ubah ikon ke centang circle
-                                                                        hapusPesertaIcon.classList.replace('bx-x-circle', 'bx-check-circle');
-                                                                        hapusPesertaBtn.setAttribute('title', 'Terima Peserta');
-                                                                        Swal.fire({
-                                                                            title: "Berhasil!",
-                                                                            text: "Peserta telah dibatalkan.",
-                                                                            icon: "success"
-                                                                        });
-                                                                    }
-                                                                });
-                                                            } else if (hapusPesertaIcon.classList.contains('bx-check-circle')) {
-                                                                // SweetAlert untuk konfirmasi penerimaan peserta
-                                                                Swal.fire({
-                                                                    title: "Apakah yakin anda akan menerima peserta ini untuk lolos diklat?",
-                                                                    text: "Peserta ini akan masuk ke data lolos seleksi",
-                                                                    icon: "question",
-                                                                    showCancelButton: true,
-                                                                    confirmButtonColor: "#28a745",
-                                                                    cancelButtonColor: "#6c757d",
-                                                                    confirmButtonText: "Ya, Terima!",
-                                                                    cancelButtonText: "Kembali",
-                                                                    reverseButtons: true
-                                                                }).then((result) => {
-                                                                    if (result.isConfirmed) {
-                                                                        // Ubah ikon kembali ke x-circle
-                                                                        hapusPesertaIcon.classList.replace('bx-check-circle', 'bx-x-circle');
-                                                                        hapusPesertaBtn.setAttribute('title', 'Batalkan Peserta');
-                                                                        Swal.fire({
-                                                                            title: "Berhasil!",
-                                                                            text: "Peserta telah diterima.",
-                                                                            icon: "success"
-                                                                        });
-                                                                    }
-                                                                });
-                                                            }
-                                                        });
-                                                    </script>
-
-                                                    <a href="javascript:void(0);" data-bs-toggle="modal"
-                                                        data-bs-target="#modalEditDiklatPeserta" title="Edit Diklat Peserta">
-                                                        <i class="bx bx-edit"></i>
-                                                    </a>
-
-                                                    <div class="modal fade" id="modalEditDiklatPeserta" tabindex="-1"
-                                                        aria-hidden="true">
-                                                        <div class="modal-dialog modal-dialog-centered" role="document">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title" id="modalEditDiklatPesertaTitle">Edit
-                                                                        Diklat Peserta</h5>
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                        aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <div class="row mb-3">
-                                                                        <div class="col-12">
-                                                                            <label for="namaPeserta" class="form-label">Nama
-                                                                                Peserta</label>
-                                                                            <input type="text" class="form-control" id="namaPeserta"
-                                                                                value="Bapa Budi Satu" readonly />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row mb-3">
-                                                                        <div class="col-12">
-                                                                            <label for="asalSekolahPeserta" class="form-label">Asal
-                                                                                Sekolah</label>
-                                                                            <input type="text" class="form-control"
-                                                                                id="asalSekolahPeserta"
-                                                                                value="SMKN 1 Jogja (Yogyakarta)" readonly />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row mb-3">
-                                                                        <div class="col">
-                                                                            <label for="pilihDiklatPeserta" class="form-label">Pilih
-                                                                                Diklat</label>
-                                                                            <div class="dropdown-with-icon">
-                                                                                <i class="bx bxs-graduation dropdown-icon"></i>
-                                                                                <select class="form-select ps-5"
-                                                                                    id="pilihDiklatPeserta">
-                                                                                    <option selected value="diklat-sebelumnya">
-                                                                                        Pendataan Ulang Peserta BIMTEK Produksi
-                                                                                        Media Pembelajaran Video</option>
-                                                                                    <option value="diklat-1">BIMTEK Online
-                                                                                        Pemanfaatan TIK Tahun 2023</option>
-                                                                                    <option value="diklat-2">Pelatihan Pengelolaan
-                                                                                        Sistem Informasi Sekolah</option>
-                                                                                    <option value="diklat-3">Workshop Desain Media
-                                                                                        Pembelajaran Interaktif</option>
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="button"
-                                                                        class="btn rounded-pill btn-outline-secondary"
-                                                                        data-bs-dismiss="modal">Tutup</button>
-                                                                    <button type="button"
-                                                                        class="btn rounded-pill btn-outline-primary">Simpan
-                                                                        Perubahan</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" />
-                                                    <label class="form-check-label" for="defaultCheck2"></label>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                    <input type="radio" class="btn-check" name="btnToggle" id="btnMendaftar" autocomplete="off">
+                    <label class="btn btn-outline-dark" for="btnMendaftar">Peserta Mendaftar</label>
                 </div>
             </div>
 
+            <!-- Tabel Peserta Lolos -->
+            <div id="lolosTable" class="card">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th><strong>No</strong></th>
+                                <th><strong>Nama Peserta</strong></th>
+                                <th><strong>Status</strong></th>
+                                <th><strong>Email</strong></th>
+                                <th><strong>Telp</strong></th>
+                                <th><strong>Aksi</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-border-bottom-0">
+                            @foreach($diklat->peserta()->where('status', 1)->get() as $index => $peserta)
+                            <tr>
+                                <td><small>{{ $index + 1 }}</small></td>
+                                <td>
+                                    <span style="font-weight: bold; color: var(--bs-secondary);">
+                                        {{ $peserta->user->nama ?? 'Nama tidak tersedia' }}
+                                    </span><br>
+                                    <span>
+                                        <small>Jabatan Mengajar: </small>
+                                        <small class="jabatan">{{ $peserta->user->jabatan ?? '-' }}</small>
+                                    </span><br>
+                                    <span>
+                                        <small>dari: </small>
+                                        <small class="asal-sekolah">{{ $peserta->user->sekolah ?? '-' }}</small>
+                                    </span>
+                                </td>
+                                <td><small>{{ $peserta->user->status_kepegawaian ?? '-' }}</small></td>
+                                <td><small>{{ $peserta->user->email ?? '-' }}</small></td>
+                                <td><small>{{ $peserta->user->telp ?? '-' }}</small></td>
+                                <!-- Di tabel peserta lolos -->
+                                <td class="actions">
+                                    <div class="d-flex gap-0 justify-content-start">
+                                        <a href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Batalkan Peserta" class="btn-batalkan" data-id="{{ $peserta->id_peserta }}">
+                                            <i class="bx bx-x-circle"></i>
+                                        </a>
+                                        
+                                        <a href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Mengambil Sertifikat" class="btn-sertifikat" data-id="{{ $peserta->id_peserta }}">
+                                            <i class="bx bx-book"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-            <script>
-                // Fungsi untuk mengubah tampilan tabel berdasarkan tombol yang dipilih
-                function toggleTable(table) {
-                    // Menyembunyikan kedua tabel
-                    document.getElementById('lolosTable').style.display = 'none';
-                    document.getElementById('mendaftarTable').style.display = 'none';
+            <!-- Tabel Peserta Mendaftar -->
+            <div id="mendaftarTable" class="card" style="display: none;">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th><strong>No</strong></th>
+                                <th class="w-30"><strong>Nama Peserta</strong></th>
+                                <th class="w-10"><strong>Status</strong></th>
+                                <th class="w-10"><strong>Tanggal Daftar</strong></th>
+                                <th class="w-30"><strong>Diklat yang Pernah Diikuti</strong></th>
+                                <th class="w-10"><strong>Aksi</strong></th>
+                                <th class="w-10"><strong>Tandai</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-border-bottom-0">
+                            @foreach($diklat->peserta()->where('status', 0)->get() as $index => $peserta)
+                            <tr>
+                                <td><small>{{ $index + 1 }}</small></td>
+                                <td>
+                                    <span style="font-weight: bold; color: var(--bs-secondary);">
+                                        {{ $peserta->user->nama ?? 'Nama tidak tersedia' }}
+                                    </span><br>
+                                    <span>
+                                        <small>Jabatan Mengajar: </small>
+                                        <small class="jabatan">{{ $peserta->user->jabatan ?? '-' }}</small>
+                                    </span><br>
+                                    <span>
+                                        <small>dari: </small>
+                                        <small class="asal-sekolah">{{ $peserta->user->sekolah ?? '-' }}</small>
+                                    </span>
+                                </td>
+                                <td><small>{{ $peserta->user->status_kepegawaian ?? '-' }}</small></td>
+                                <td><small>{{ $peserta->tgl ? \Carbon\Carbon::parse($peserta->tgl)->format('d M Y') : '-' }}</small></td>
+                                <td><small>{{ $peserta->riwayat_diklat ?? '-' }}</small></td>
+                                <td class="actions">
+                                    <div class="d-flex gap-0 justify-content-start">
+                                        <!-- Tombol Toggle Status -->
+                                        <a href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Terima/Batalkan Peserta" id="btnPeserta{{ $peserta->id_peserta }}">
+                                            <i class="bx bx-x-circle" id="iconPeserta{{ $peserta->id_peserta }}"></i>
+                                        </a>
 
-                    // Menampilkan tabel yang dipilih
-                    if (table === 'lolos') {
-                        document.getElementById('lolosTable').style.display = 'block';
-                    } else if (table === 'mendaftar') {
-                        document.getElementById('mendaftarTable').style.display = 'block';
-                    }
+                                        <!-- Button edit -->
+                                        <a href="javascript:void(0);" data-bs-toggle="modal"
+                                            data-bs-target="#modalEditDiklatPeserta" 
+                                            onclick="editPeserta({{ $peserta->id_peserta }})"
+                                            title="Edit Diklat Peserta">
+                                            <i class="bx bx-edit"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="{{ $peserta->id_peserta }}" />
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- @push('style')
+<style>
+    /* Atur lebar kolom */
+    #mendaftarTable table.table th,
+    #mendaftarTable table.table td {
+        vertical-align: middle;
+    }
+
+    #mendaftarTable table.table th {
+        text-align: start;
+    }
+
+    #mendaftarTable table.table .w-30 {
+        width: 30%;
+    }
+
+    #mendaftarTable table.table .w-10 {
+        width: 10%;
+    }
+
+    #mendaftarTable table.table .small-col {
+        text-align: center;
+    }
+
+    #mendaftarTable .table-responsive {
+        overflow-x: auto;
+    }
+
+    #mendaftarTable td:nth-child(2) {
+        font-size: 13px;
+    }
+
+    #mendaftarTable td:nth-child(5) {
+        font-size: 12px;
+        color: black;
+    }
+
+    #mendaftarTable td:not(:nth-child(2)):not(:nth-child(5)) {
+        font-size: 13px;
+    }
+
+    #mendaftarTable .form-check {
+        display: flex;
+        justify-content: center;
+    }
+
+    #mendaftarTable .form-check-input {
+        width: 18px;
+        height: 18px;
+        outline: 2px solid #ccc;
+    }
+
+    #mendaftarTable .form-check-input:hover {
+        border-color: #0a58ca;
+        outline-color: grey;
+    }
+
+    .dropdown-with-icon {
+        position: relative;
+    }
+
+    .dropdown-with-icon .dropdown-icon {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.5rem;
+        pointer-events: none;
+    }
+
+    .dropdown-with-icon select {
+        padding-left: 2.5rem;
+    }
+</style>
+@endpush -->
+
+@push('script')
+<script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle function for tables
+    function toggleTable(table) {
+        document.getElementById('lolosTable').style.display = 'none';
+        document.getElementById('mendaftarTable').style.display = 'none';
+        document.getElementById(table + 'Table').style.display = 'block';
+    }
+
+    // Add event listeners to radio buttons
+    document.getElementById('btnLolos').addEventListener('change', function() {
+        toggleTable('lolos');
+    });
+
+    document.getElementById('btnMendaftar').addEventListener('change', function() {
+        toggleTable('mendaftar');
+    });
+
+    // Initial display
+    toggleTable('lolos');
+
+    // Handle button actions
+    const batalkanButtons = document.querySelectorAll('.btn-batalkan');
+    batalkanButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const idPeserta = this.dataset.id;
+            console.log('Button batalkan clicked, id:', idPeserta);
+
+            Swal.fire({
+                title: "Apakah yakin anda akan membatalkan peserta ini untuk lolos diklat?",
+                text: "Peserta ini akan dikembalikan ke data pendaftar",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: "Ya, Batalkan!",
+                cancelButtonText: "Kembali",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading state
+                    Swal.showLoading();
+
+                    fetch(`/diklat/peserta/${idPeserta}/status`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({ status: 0 })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.success) {
+                            Swal.fire({
+                                title: "Berhasil!",
+                                text: data.message,
+                                icon: "success"
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            throw new Error(data.message || 'Terjadi kesalahan');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: "Error!",
+                            text: error.message || "Terjadi kesalahan saat memproses permintaan",
+                            icon: "error"
+                        });
+                    });
                 }
+            });
+        });
+    });
 
-                // Memanggil fungsi untuk menampilkan tabel peserta lolos saat halaman dimuat
-                window.onload = function() {
-                    toggleTable('lolos');
-                }
-            </script>
-
-
-            @endsection
+    // Add error reporting
+    window.onerror = function(msg, url, lineNo, columnNo, error) {
+        console.log('Error: ' + msg + '\nURL: ' + url + '\nLine: ' + lineNo + '\nColumn: ' + columnNo + '\nError object: ' + JSON.stringify(error));
+        return false;
+    };
+});
+</script>
+@endpush
+@endsection
