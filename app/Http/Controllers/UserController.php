@@ -11,7 +11,7 @@ class UserController extends Controller
     {
         // Ambil diklat yang aktif (status = 1) dengan paginasi
         $diklatAktif = Diklat::where('status', 1)
-            ->orderBy('tgl_mulai', 'asc')
+            ->orderBy('tgl_mulai', 'desc')
             ->paginate(10); // Ambil 10 data per halaman
 
         // Kirim data ke view
