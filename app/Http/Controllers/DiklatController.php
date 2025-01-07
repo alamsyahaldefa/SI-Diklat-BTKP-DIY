@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Diklat;
 use App\Models\PesertaDiklat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class DiklatController extends Controller
@@ -26,15 +27,28 @@ class DiklatController extends Controller
     }
 
 
-    public function pesertaLolos()
+    public function pesertaLolos($id)
     {
-        return $this->hasMany(PesertaDiklat::class)->where('status', 'lolos');
+        $diklat = Diklat::findOrFail($id);
+        $pesertaLolos = PesertaDiklat::with('user')
+            ->where('id_diklat', $id)
+            ->where('status', 1) // Peserta lolos
+            ->get();
+    
+        return view('content.tables.peserta-lolos', compact('diklat', 'pesertaLolos'));
     }
-
-    public function pesertaMendaftar() 
+    
+    public function pesertaMendaftar($id)
     {
-        return $this->hasMany(PesertaDiklat::class)->where('status', 'mendaftar');
+        $diklat = Diklat::findOrFail($id);
+        $pesertaMendaftar = PesertaDiklat::with('user')
+            ->where('id_diklat', $id)
+            ->where('status', 0) // Peserta mendaftar
+            ->get();
+    
+        return view('content.tables.peserta-mendaftar', compact('diklat', 'pesertaMendaftar'));
     }
+    
 
 
     public function store(Request $request)
@@ -97,13 +111,27 @@ class DiklatController extends Controller
         return redirect()->back()->with('success', 'Status updated successfully');
     }
 
-    public function updatePesertaStatus($id_diklat, $id_peserta)
+    public function updateStatusPeserta(Request $request, $id_peserta)
     {
-        $peserta = PesertaDiklat::findOrFail($id_peserta);
-        $peserta->status = 'lolos';
-        $peserta->save();
-        
-        return response()->json(['success' => true]);
+        try {
+            $peserta = PesertaDiklat::findOrFail($id_peserta);
+
+            // Update status berdasarkan input request
+            $peserta->status = $request->status;
+            $peserta->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => $peserta->status == 1 
+                    ? 'Peserta berhasil diterima ke daftar lolos.' 
+                    : 'Peserta berhasil dikembalikan ke daftar pendaftar.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function toggleField($id, $field)
@@ -121,25 +149,74 @@ class DiklatController extends Controller
     }
 
     public function rekapData($id)
-{
-    $diklat = Diklat::findOrFail($id);
+    {
+        try {
+            Log::info("Accessing rekapData for diklat ID: $id"); // Debug log
+            
+            $diklat = Diklat::findOrFail($id);
+            
+            // Get peserta lolos
+            $pesertaLolos = PesertaDiklat::with('user')
+                ->where('id_diklat', $id)
+                ->where('status', 1)
+                ->get();
+                
+            Log::info("Peserta Lolos count: " . $pesertaLolos->count()); // Debug log
+            Log::info("Peserta Lolos Data: ", $pesertaLolos->toArray());
+            
+            // Get peserta mendaftar
+            $pesertaMendaftar = PesertaDiklat::with('user')
+                ->where('id_diklat', $id)
+                ->where('status', 0)
+                ->get();
+                
+            Log::info("Peserta Mendaftar count: " . $pesertaMendaftar->count()); // Debug log
+            Log::info("Peserta Mendaftar Data: ", $pesertaMendaftar->toArray());
+            
+            // Debug log details of each peserta
+            foreach($pesertaLolos as $p) {
+                Log::info("Lolos - ID: {$p->id_peserta}, Status: {$p->status}, NIK: {$p->nik}");
+            }
+            
+            foreach($pesertaMendaftar as $p) {
+                Log::info("Mendaftar - ID: {$p->id_peserta}, Status: {$p->status}, NIK: {$p->nik}");
+            }
+            
+            return view('content.tables.rekap-data', compact('diklat', 'pesertaLolos', 'pesertaMendaftar'));
+        } catch (\Exception $e) {
+            Log::error("Error in rekapData: " . $e->getMessage()); // Debug log
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
     
-    $pesertaLolos = PesertaDiklat::with('user')
-        ->where('id_diklat', $id)
-        ->where('status', 'lolos')
-        ->get();
-        
-    $pendaftarBaru = PesertaDiklat::with('user')
-        ->where('id_diklat', $id)
-        ->where('status', 'mendaftar')
-        ->get();
+    public function togglePesertaStatus($id)
+    {
+        try {
+            Log::info("Toggling status for peserta ID: $id"); // Debug log
+            
+            $peserta = PesertaDiklat::findOrFail($id);
+            Log::info("Current status: " . $peserta->status); // Debug log
+            
+            // Toggle status
+            $peserta->status = $peserta->status == 0 ? 1 : 0;
+            $peserta->save();
+            
+            Log::info("New status: " . $peserta->status); // Debug log
     
-    return view('content.tables.rekap-data', [
-        'diklat' => $diklat,
-        'pesertaLolos' => $pesertaLolos,
-        'pendaftarBaru' => $pendaftarBaru
-    ]);
-}
+            $statusText = $peserta->status == 1 ? 'peserta lolos' : 'peserta mendaftar';
+            return response()->json([
+                'success' => true,
+                'message' => "Status berhasil diubah menjadi $statusText"
+            ]);
+    
+        } catch (\Exception $e) {
+            Log::error("Error toggling status: " . $e->getMessage()); // Debug log
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function edit($id)
     {
@@ -178,15 +255,6 @@ class DiklatController extends Controller
     $diklat = Diklat::where('status', 1)->get();
 
     return view('user.main', compact('diklat'));
-}
-
-public function togglePesertaStatus($id)
-{
-    $peserta = PesertaDiklat::findOrFail($id);
-    $peserta->status = $peserta->status === 'mendaftar' ? 'lolos' : 'mendaftar';
-    $peserta->save();
-    
-    return response()->json(['success' => true]);
 }
 
 public function batalkanPeserta($id)

@@ -132,22 +132,30 @@ Route::middleware(['admin'])->group(function () {
         Route::put('/{id}/update', [DiklatController::class, 'update'])->name('diklat.update');
         Route::delete('/{id}/delete', [DiklatController::class, 'destroy'])->name('diklat.destroy');
 
+        Route::post('/peserta/{id}/toggle-status', [DiklatController::class, 'togglePesertaStatus'])
+            ->name('peserta.toggle-status');
+
         // Routes untuk status, pengumuman, dan kuis toggle
-        Route::get('/diklat/{id}/status/{status}', [DiklatController::class, 'updateStatus'])->name('diklat.updateStatus');
+        Route::get('/{id}/status/{status}', [DiklatController::class, 'updateStatus'])->name('diklat.updateStatus');
         Route::post('/{id}/pengumuman', [DiklatController::class, 'togglePengumuman'])->name('diklat.pengumuman');
         Route::post('/{id}/quiz', [DiklatController::class, 'toggleQuiz'])->name('diklat.quiz');
 
         // Route untuk rekap data
         Route::get('/{id}/rekap', [DiklatController::class, 'rekapData'])->name('diklat.rekap');
         Route::get('/rekap/{id_diklat}', [RekapData::class, 'index'])->name('rekap-data');
-        Route::post('/diklat/peserta/{id}/status', [PesertaController::class, 'updateStatus'])->name('peserta.update-status');
+        Route::post('/peserta/{id}/status', [PesertaController::class, 'updateStatus'])->name('peserta.update-status');
         Route::post('/peserta/{id_peserta}/sertifikat', [RekapData::class, 'updateSertifikat'])->name('peserta.update-sertifikat');
 
         // Routing untuk peserta
         Route::get('/{id}/peserta', [PesertaController::class, 'getPesertaByDiklat'])->name('diklat.peserta');
         Route::delete('/peserta/{id}', [PesertaController::class, 'destroy'])->name('peserta.destroy');
         Route::post('/peserta/{id}/status', [PesertaController::class, 'updateStatus'])->name('peserta.update-status');
+        Route::post('/peserta/{id_peserta}/update-status', [DiklatController::class, 'updateStatusPeserta']);
         Route::post('/peserta/{id}/sertifikat', [PesertaController::class, 'updateSertifikat'])->name('peserta.update-sertifikat');
+
+        Route::get('/{id}/peserta-lolos', [DiklatController::class, 'pesertaLolos'])->name('peserta.lolos');
+        Route::get('/{id}/peserta-mendaftar', [DiklatController::class, 'pesertaMendaftar'])->name('peserta.mendaftar');
+
 
         // Route untuk generate sertifikat
         Route::post('/{id}/generate-certificates', [DiklatController::class, 'generateCertificates'])->name('diklat.generateCertificates');
