@@ -52,6 +52,7 @@ use App\Http\Controllers\form_layouts\TambahDiklat;
 use App\Http\Controllers\tables\DataDiklat;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\DiklatController;
+use App\Http\Controllers\DokumentasiController;
 use App\Http\Controllers\PesertaController;
 
 
@@ -115,6 +116,11 @@ Route::middleware(['auth'])->group(function () {
 // Routes khusus untuk admin dengan middleware "admin"
 Route::middleware(['admin'])->group(function () {
     Route::get('/dashboard', [Dashboard::class, 'index'])->name('dashboard');
+    Route::get('/dokumentasi-foto', [DiklatController::class, 'fotoDiklat'])->name('dokumentasi.foto');
+    Route::post('/dokumentasi', [DokumentasiController::class, 'store'])->name('dokumentasi.store');
+    Route::put('/dokumentasi/{id}', [DokumentasiController::class, 'update'])->name('dokumentasi.update');
+
+    Route::get('/foto-diklat', [DiklatController::class, 'fotoDiklat'])->name('dokumentasi.foto');
 
     // Diklat Management Routes
     Route::prefix('diklat')->group(function () {
@@ -123,6 +129,9 @@ Route::middleware(['admin'])->group(function () {
         Route::get('/{id}/edit', [DiklatController::class, 'edit'])->name('diklat.edit');
         Route::put('/{id}/update', [DiklatController::class, 'update'])->name('diklat.update');
         Route::delete('/{id}/delete', [DiklatController::class, 'destroy'])->name('diklat.destroy');
+
+        Route::get('/foto-diklat', [DiklatController::class, 'fotoDiklat'])->name('dokumentasi.foto');
+        Route::post('/{id}/update-foto', [DiklatController::class, 'updateFoto'])->name('diklat.update-foto');
 
         Route::post('/peserta/{id}/toggle-status', [DiklatController::class, 'togglePesertaStatus'])
             ->name('peserta.toggle-status');
