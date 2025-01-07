@@ -95,9 +95,18 @@ Route::prefix('users')->group(function () {
         return view('users.daftar');
     })->name('users.daftar');
 
-    Route::get('/form-daftar', function () {
-        return view('users.form-daftar');
-    })->name('users.form-daftar');
+
+    Route::get('/form-daftar', [DaftarController::class, 'formDaftar'])->name('users.form-daftar');
+
+    Route::get('/daftar/{id}', [DaftarController::class, 'index'])->name('users.daftar');
+    Route::get('/form-daftar', [DaftarController::class, 'formDaftar'])->name('users.form-daftar');
+    Route::post('/form-daftar', [DaftarController::class, 'store'])->name('form.daftar');
+    Route::post('/submit-daftar', [DaftarController::class, 'store'])->name('form.daftar');
+    Route::get('/cek-nik/{nik}', [DaftarController::class, 'cekNik'])->name('cek.nik');
+
+    Route::post('/submit-pendaftaran', [DaftarController::class, 'store'])->name('form.daftar');
+    Route::post('/diklat/{id_diklat}/peserta/{id_peserta}/approve', [DiklatController::class, 'updatePesertaStatus'])
+        ->name('diklat.peserta.approve');
 
     // Ubah dari closure ke controller method
     Route::get('/index', [UserController::class, 'index'])->name('users.index-u');
