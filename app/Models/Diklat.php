@@ -33,7 +33,7 @@ class Diklat extends Model
         'komunitas',
         'link'
     ];
-
+    
     protected $dates = [
         'tgl_mulai',
         'tgl_selesai'
