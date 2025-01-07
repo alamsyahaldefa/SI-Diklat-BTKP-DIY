@@ -4,19 +4,19 @@
       "menuHeader": "Kelola Diklat"
     },
     {
-      "url": "/dashboard",
+      "url": "/dashboard", 
       "name": "Dashboard",
       "icon": "menu-icon tf-icons bx bx-home-circle",
       "slug": "dashboard"
     },
     {
-      "url": "tambah-diklat",
+      "url": "/tambah-diklat",  
       "icon": "menu-icon tf-icons bx bx-detail",
       "name": "Tambah Diklat",
       "slug": "tambah-diklat"
     },
     {
-      "url": "data-diklat",
+      "url": "/data-diklat",    
       "icon": "menu-icon tf-icons bx bx-table",
       "name": "Data Diklat",
       "slug": "data-diklat"
@@ -25,32 +25,7 @@
       "name": "Foto Diklat",
       "icon": "menu-icon tf-icons bx bx-collection",
       "slug": "foto-diklat",
-      "url": "foto-diklat"
-    },
-    {
-      "name": "Authentications",
-      "icon": "menu-icon tf-icons bx bx-lock-open-alt",
-      "slug": "auth",
-      "submenu": [
-        {
-          "url": "auth/login-basic",
-          "name": "Login",
-          "slug": "auth-login-basic",
-          "target": "_blank"
-        },
-        {
-          "url": "auth/register-basic",
-          "name": "Register",
-          "slug": "auth-register-basic",
-          "target": "_blank"
-        },
-        {
-          "url": "auth/forgot-password-basic",
-          "name": "Forgot Password",
-          "slug": "auth-forgot-password-basic",
-          "target": "_blank"
-        }
-      ]
+      "url": "/foto-diklat"     
     }
   ]
 }
