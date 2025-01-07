@@ -100,15 +100,18 @@ class DaftarController extends Controller
     public function formDaftar(Request $request)
     {
         try {
-            $nik = $request->input('nik');
-            $diklatId = $request->input('id_diklat') ?? session('diklat_id');
-            
-            if (!$nik || !$diklatId) {
-                throw new \Exception('Data tidak lengkap');
+            // Validasi input yang diperlukan
+            if (!$request->has('nik') || !$request->has('id_diklat')) {
+                return redirect()->back()->with('error', 'Data tidak lengkap');
             }
 
+            $nik = $request->input('nik');
+            $diklatId = $request->input('id_diklat');
+
+            // Ambil data diklat
             $diklat = Diklat::findOrFail($diklatId);
-            
+
+            // Cek apakah sudah terdaftar
             $existingRegistration = PesertaDiklat::where('nik', $nik)
                 ->where('id_diklat', $diklatId)
                 ->exists();
@@ -117,21 +120,31 @@ class DaftarController extends Controller
                 return redirect()->back()->with('error', 'Anda sudah terdaftar untuk diklat ini');
             }
 
+            // Cari data diri berdasarkan NIK
             $dataDiri = Diri::where('nik', $nik)
                 ->where('batal', 0)
                 ->first();
 
-            if ($dataDiri) {
-                $dataDiri->jenjang_str = $this->convertJenjangToString($dataDiri->jenjang);
+            // Jika data tidak ditemukan, buat instance baru
+            if (!$dataDiri) {
+                $dataDiri = new Diri();
+                $dataDiri->nik = $nik;
             } else {
-                $dataDiri = new Diri(['nik' => $nik]);
+                // Jika data ditemukan, konversi jenjang ke string
+                $dataDiri->jenjang_str = $this->convertJenjangToString($dataDiri->jenjang);
             }
 
-            return view('users.form-daftar', compact('dataDiri', 'diklat'));
-            
+            // Debug untuk memastikan data
+            Log::info('Data Diri:', ['dataDiri' => $dataDiri, 'nik' => $nik]);
+
+            return view('users.form-daftar', [
+                'dataDiri' => $dataDiri,
+                'diklat' => $diklat
+            ]);
+
         } catch (\Exception $e) {
             Log::error('Error in formDaftar: ' . $e->getMessage());
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 
