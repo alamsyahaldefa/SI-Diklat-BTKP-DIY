@@ -129,7 +129,11 @@ Route::middleware(['admin'])->group(function () {
     Route::post('/dokumentasi', [DokumentasiController::class, 'store'])->name('dokumentasi.store');
     Route::put('/dokumentasi/{id}', [DokumentasiController::class, 'update'])->name('dokumentasi.update');
 
+    Route::get('/data-diklat', [DataDiklat::class, 'index'])->name('data-diklat');
     Route::get('/foto-diklat', [DiklatController::class, 'fotoDiklat'])->name('dokumentasi.foto');
+    Route::get('/edit-diklat', [EditDiklat::class, 'edit'])->name('edit-diklat');
+    Route::get('/tambah-diklat', [TambahDiklat::class, 'index'])->name('tambah-diklat');
+    Route::get('/form/layouts-vertical', [VerticalForm::class, 'index'])->name('form-layouts-vertical');
 
     // Diklat Management Routes
     Route::prefix('diklat')->group(function () {
@@ -173,11 +177,6 @@ Route::middleware(['admin'])->group(function () {
         // Route untuk generate sertifikat
         Route::post('/{id}/generate-certificates', [DiklatController::class, 'generateCertificates'])->name('diklat.generateCertificates');
     });
-
-    Route::get('/data-diklat', [DataDiklat::class, 'index'])->name('data-diklat');
-    Route::get('/edit-diklat', [EditDiklat::class, 'edit'])->name('edit-diklat');
-    Route::get('/tambah-diklat', [TambahDiklat::class, 'index'])->name('tambah-diklat');
-    Route::get('/form/layouts-vertical', [VerticalForm::class, 'index'])->name('form-layouts-vertical');
 
 
 });

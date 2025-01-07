@@ -14,7 +14,7 @@
                 <a href="javascript:void(0);">Administrator</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{{ route('data-diklat') }}">Data Diklat</a>
+                <a href="{{ url('/data-diklat') }}">Data Diklat</a>
             </li>
             <li class="breadcrumb-item active">Rekap Data Diklat</li>
         </ol>
