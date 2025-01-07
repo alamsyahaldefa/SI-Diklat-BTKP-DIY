@@ -1,5 +1,6 @@
 @extends('layouts/commonMaster' )
 
+
 @php
 /* Display elements */
 $contentNavbar = true;

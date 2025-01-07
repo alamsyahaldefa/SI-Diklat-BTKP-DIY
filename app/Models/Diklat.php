@@ -46,19 +46,24 @@ class Diklat extends Model
         'kuota' => 'integer'
     ];
 
-    public function pesertaDiklat()
+    // Relasi utama ke peserta diklat
+    public function peserta()
     {
         return $this->hasMany(PesertaDiklat::class, 'id_diklat', 'id_diklat');
     }
 
+    // Relasi untuk peserta yang lolos (status = 1)
     public function pesertaLolos()
     {
-        return $this->pesertaDiklat()->where('status', 'lolos');
+        return $this->hasMany(PesertaDiklat::class, 'id_diklat', 'id_diklat')
+                    ->where('status', 1);
     }
 
+    // Relasi untuk peserta yang mendaftar (status = 0)
     public function pesertaMendaftar()
     {
-        return $this->pesertaDiklat()->where('status', 'mendaftar');
+        return $this->hasMany(PesertaDiklat::class, 'id_diklat', 'id_diklat')
+                    ->where('status', 0);
     }
 
     public function scopeDibuka($query)
@@ -71,7 +76,7 @@ class Diklat extends Model
         // Ambil data diklat yang statusnya aktif (1) dan urutkan berdasarkan tanggal mulai
         $diklatAktif = Diklat::where('status', 1)
             ->orderBy('tgl_mulai', 'asc')
-            ->paginate(10); // Paginasi 10 data per halaman
+            ->paginate(10);
 
         return view('diklat-aktif', compact('diklatAktif'));
     }

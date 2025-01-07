@@ -3,32 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Models\Diklat;
+use App\Models\PesertaDiklat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class DiklatController extends Controller
 {
-    public function index(Request $request)
-    {
+    public function index(Request $request) {
+        // Fix query building - current code reassigns $diklat
         $query = $request->input('search');
-        $diklat = Diklat::query();
-
-        // Filter status yang dibuka (status = 1)
-
-        $diklat = Diklat::where('status', 1)->first();
-
+        $diklat = Diklat::where('status', 1);
+    
         if ($query) {
             $diklat->where(function ($q) use ($query) {
                 $q->where('nama_diklat', 'like', "%{$query}%")
                   ->orWhere('deskripsi', 'like', "%{$query}%");
             });
         }
-
-        $diklat = $diklat->paginate(10); // Pagination table
-
-
+    
+        $diklat = $diklat->paginate(10);
+        return view('content.tables.diklat', compact('diklat'));
     }
 
+
+    public function pesertaLolos()
+    {
+        return $this->hasMany(PesertaDiklat::class)->where('status', 'lolos');
+    }
+
+    public function pesertaMendaftar() 
+    {
+        return $this->hasMany(PesertaDiklat::class)->where('status', 'mendaftar');
+    }
 
 
     public function store(Request $request)
@@ -91,6 +97,15 @@ class DiklatController extends Controller
         return redirect()->back()->with('success', 'Status updated successfully');
     }
 
+    public function updatePesertaStatus($id_diklat, $id_peserta)
+    {
+        $peserta = PesertaDiklat::findOrFail($id_peserta);
+        $peserta->status = 'lolos';
+        $peserta->save();
+        
+        return response()->json(['success' => true]);
+    }
+
     public function toggleField($id, $field)
     {
         $diklat = Diklat::findOrFail($id);
@@ -106,22 +121,25 @@ class DiklatController extends Controller
     }
 
     public function rekapData($id)
-    {
-        $diklat = Diklat::with(['pesertaLolos', 'pesertaMendaftar'])->find($id);
-        if (!$diklat) {
-            abort(404, 'Diklat tidak ditemukan.');
-        }
-
-        $pendaftarCount = $diklat->pesertaMendaftar->count();
-
-        $kuota = $diklat->kuota;
-
-        $statusPendaftaran = $diklat->status_pendaftaran ? 'Pendaftaran Masih Dibuka' : 'Pendaftaran Sudah Ditutup';
-
-        $statusPengumuman = $diklat->pengumuman_diterbitkan ? 'Pengumuman Diterbitkan' : 'Pengumuman Belum Diterbitkan';
-
-        return view('content.tables.rekap-data', compact('diklat', 'pendaftarCount', 'kuota', 'statusPendaftaran', 'statusPengumuman'));
-    }
+{
+    $diklat = Diklat::findOrFail($id);
+    
+    $pesertaLolos = PesertaDiklat::with('user')
+        ->where('id_diklat', $id)
+        ->where('status', 'lolos')
+        ->get();
+        
+    $pendaftarBaru = PesertaDiklat::with('user')
+        ->where('id_diklat', $id)
+        ->where('status', 'mendaftar')
+        ->get();
+    
+    return view('content.tables.rekap-data', [
+        'diklat' => $diklat,
+        'pesertaLolos' => $pesertaLolos,
+        'pendaftarBaru' => $pendaftarBaru
+    ]);
+}
 
     public function edit($id)
     {
@@ -160,6 +178,34 @@ class DiklatController extends Controller
     $diklat = Diklat::where('status', 1)->get();
 
     return view('user.main', compact('diklat'));
+}
+
+public function togglePesertaStatus($id)
+{
+    $peserta = PesertaDiklat::findOrFail($id);
+    $peserta->status = $peserta->status === 'mendaftar' ? 'lolos' : 'mendaftar';
+    $peserta->save();
+    
+    return response()->json(['success' => true]);
+}
+
+public function batalkanPeserta($id)
+{
+    $peserta = PesertaDiklat::findOrFail($id);
+    $peserta->status = 'mendaftar';
+    $peserta->save();
+    
+    return response()->json(['success' => true]);
+}
+
+public function updateSertifikat($id)
+{
+    $peserta = PesertaDiklat::findOrFail($id);
+    $peserta->sertifikat_diambil = true;
+    $peserta->tanggal_ambil_sertifikat = now();
+    $peserta->save();
+    
+    return response()->json(['success' => true]);
 }
 
 

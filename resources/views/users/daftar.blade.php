@@ -102,14 +102,15 @@
         <div class="row g-4">
             <!-- Form Section -->
             <div class="col-md-6">
-                <div class="form-container">
-                    <h3 class="mb-3 icon-wrapper"><i class='bx bx-id-card'></i> Masukan NIK</h3>
-                    <label for="nik" class="form-label fw-bold">NIK (Nomor Induk Kependudukan):</label>
-                    <input type="text" id="nik" class="form-control mb-3" placeholder="Masukan NIK Anda (Tanpa Spasi)">
-                    <a href="{{ route('users.form-daftar') }}" class="btn btn-submit w-100">
-                        <i class='bx bx-send'></i> SUBMIT
-                    </a>
-                </div>
+            <div class="form-container">
+                <h3 class="mb-3 icon-wrapper"><i class='bx bx-id-card'></i> Masukan NIK</h3>
+                <form action="{{ route('users.form-daftar') }}" method="GET">
+                    @csrf
+                    <input type="hidden" name="id_diklat" value="{{ $diklat->id_diklat }}">
+                    <input type="text" name="nik" id="nik" class="form-control mb-3" maxlength="16" required>
+                    <button type="submit" class="btn btn-submit w-100">Submit</button>
+                </form>
+            </div>
             </div>
             <!-- Information Section -->
             <div class="col-md-6">
@@ -129,6 +130,53 @@
     </div>
 </body>
 
+<script>
+document.getElementById('nik').addEventListener('input', function() {
+    const nik = this.value.trim();
+    const errorDiv = document.getElementById('nik-error');
+    
+    // Clear previous error
+    if (errorDiv) {
+        errorDiv.remove();
+    }
+    
+    if (nik.length === 16) {
+        fetch(`/users/cek-nik/${nik}`, {
+            headers: {
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                // Show error message but still allow form submission for new registration
+                const div = document.createElement('div');
+                div.id = 'nik-error';
+                div.className = 'alert alert-warning mt-2';
+                div.textContent = data.message;
+                this.parentNode.appendChild(div);
+                
+                // Submit form after 2 seconds to show the message
+                setTimeout(() => {
+                    this.closest('form').submit();
+                }, 2000);
+            } else {
+                // If success (existing user), submit form immediately
+                this.closest('form').submit();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const div = document.createElement('div');
+            div.id = 'nik-error';
+            div.className = 'alert alert-danger mt-2';
+            div.textContent = 'Terjadi kesalahan saat memverifikasi NIK';
+            this.parentNode.appendChild(div);
+        });
+    }
+});
+</script>
 
 
 
