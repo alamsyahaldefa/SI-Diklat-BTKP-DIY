@@ -96,11 +96,11 @@
                   </a>
 
                   <!-- Kelola Peserta -->
-                  <a href="{{ route('diklat.peserta', $diklat->id_diklat) }}"
+                  <!-- <a href="{{ route('diklat.peserta', $diklat->id_diklat) }}"
                     class="btn btn-sm btn-outline-info tooltip-custom">
                     <i class="bx bx-user"></i>
                     <span class="tooltip-text">Kelola peserta diklat</span>
-                  </a>
+                  </a> -->
 
                   <!-- Hapus Data -->
                   <a href="#"
@@ -127,12 +127,12 @@
                   </a>
 
                   <!-- Toggle Quiz -->
-                  <a href="#"
+                  <!-- <a href="#"
                     onclick="toggleQuiz({{ $diklat->id_diklat }})"
                     class="btn btn-sm btn-outline-secondary tooltip-custom">
                     <i class="bx bx-book"></i>
                     <span class="tooltip-text">Terbitkan kuesioner diklat</span>
-                  </a>
+                  </a> -->
 
                   <!-- Generate Sertifikat -->
                   <a href="#"
