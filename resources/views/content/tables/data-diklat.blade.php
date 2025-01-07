@@ -3,6 +3,7 @@
 @section('title', 'Data Diklat -')
 
 @section('content')
+
 <div class="d-flex justify-content-between align-items-center mb-2">
   <h3>Data Diklat</h3>
   <nav aria-label="breadcrumb">
@@ -121,9 +122,10 @@
                   <!-- Toggle Pengumuman -->
                   <a href="#"
                     onclick="togglePengumuman({{ $diklat->id_diklat }})"
-                    class="btn btn-sm btn-outline-success tooltip-custom">
-                    <i class="bx bx-volume-full"></i>
-                    <span class="tooltip-text">Terbitkan pengumuman diklat</span>
+                    class="btn btn-sm btn-outline-success tooltip-custom {{ $diklat->pengumuman ? 'active-announcement' : '' }}"
+                    id="announcement-btn-{{ $diklat->id_diklat }}">
+                      <i class="bx bx-volume-full"></i>
+                      <span class="tooltip-text">Terbitkan pengumuman diklat</span>
                   </a>
 
                   <!-- Toggle Quiz -->
@@ -283,6 +285,29 @@
         visibility: visible;
         opacity: 1;
       }
+
+    /* Active state for announcement button */
+    .active-announcement {
+        background-color: #198754 !important;
+        color: white !important;
+        border-color: #198754 !important;
+    }
+
+    .active-announcement i {
+        color: white !important;
+    }
+
+    .active-announcement:hover {
+        background-color: #157347 !important;
+        border-color: #157347 !important;
+        color: white !important;
+    }
+
+    /* Normal state hover effect remains the same */
+    .btn-outline-success:not(.active-announcement):hover {
+        background-color: #198754;
+        color: white;
+    }
     </style>
     <!-- SweetAlert2 Script -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -406,4 +431,36 @@
             });
           });
       }
+
+      function togglePengumuman(id_diklat) {
+    fetch(`/diklat/${id_diklat}/toggle-pengumuman`, {
+        method: "POST",
+        headers: {
+            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+        }
+    })
+    .then((response) => response.json())
+    .then((data) => {
+        if (data.success) {
+            // Toggle the active class
+            const button = document.querySelector(`#announcement-btn-${id_diklat}`);
+            button.classList.toggle('active-announcement');
+            
+            Swal.fire({
+                title: "Berhasil!",
+                text: data.message,
+                icon: "success",
+                timer: 1500
+            });
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        Swal.fire({
+            title: "Error!",
+            text: "Terjadi kesalahan saat mengupdate pengumuman",
+            icon: "error",
+        });
+    });
+}
     </script>

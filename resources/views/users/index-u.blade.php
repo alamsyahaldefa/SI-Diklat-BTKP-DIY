@@ -107,7 +107,7 @@
                 @foreach($diklatAktif as $diklat)
                     <div class="col">
                         <div class="card d-flex flex-row align-items-center p-3">
-                            <img class="card-img-left" src="https://storage.googleapis.com/a1aa/image/uVuHkkWH0yKVAxK6BeGXk2M21UMFgjDfUpPk5HNo3TSYtD6TA.jpg" alt="Diklat Image" style="width: 150px; height: auto; object-fit: cover; border-radius: 4px; margin-right: 15px;">
+                        <img class="card-img-left" src="{{ $diklat->foto_url }}" alt="Diklat Image" style="width: 150px; height: auto; object-fit: cover; border-radius: 4px; margin-right: 15px;">
                             <div class="card-body pb-1 flex-grow-1">
                                 <h6 class="card-title text-dark fw-bold">{{ $diklat->nama_diklat }}</h6>
                                 <div class="text-muted small mb-2">
@@ -127,10 +127,20 @@
                                 <a href="{{ route('users.daftar-diklat', ['id' => $diklat->id_diklat]) }}" class="btn btn-sm btn-primary">
                                     <i class='bx bx-check-square me-1'></i> DAFTAR DIKLAT
                                 </a>
-                                <button type="button" class="btn btn-sm btn-warning text-white">
-                                    <i class='bx bx-error me-1'></i> 
-                                    {{ $diklat->pengumuman ? 'LIHAT PENGUMUMAN' : 'BELUM ADA PENGUMUMAN' }}
-                                </button>
+                                @if($diklat->pengumuman == 1 && !empty($diklat->surat))
+                                    <a href="{{ asset('storage/surat_diklat/' . $diklat->surat) }}" 
+                                    class="btn btn-sm btn-warning text-white"
+                                    target="_blank">
+                                        <i class='bx bx-error me-1'></i> LIHAT PENGUMUMAN
+                                    </a>
+                                @else
+                                    <button type="button" 
+                                            class="btn btn-sm btn-warning text-white" 
+                                            disabled 
+                                            style="opacity: 0.65; cursor: not-allowed;">
+                                        <i class='bx bx-error me-1'></i> BELUM ADA PENGUMUMAN
+                                    </button>
+                                @endif
                             </div>
                         </div>
                     </div>

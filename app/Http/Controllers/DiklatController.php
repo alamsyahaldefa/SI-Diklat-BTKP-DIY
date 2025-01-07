@@ -14,19 +14,22 @@ class DiklatController extends Controller
     public function index(Request $request)
     {
         $query = $request->input('search');
-        $diklat = Diklat::where('status', 1);
+        $diklats = Diklat::query();
 
         if ($query) {
-            $diklat->where(function ($q) use ($query) {
+            $diklats->where(function ($q) use ($query) {
                 $q->where('nama_diklat', 'like', "%{$query}%")
                     ->orWhere('deskripsi', 'like', "%{$query}%");
             });
         }
 
-        $diklat = $diklat->paginate(10);
-        return view('content.tables.diklat', compact('diklat'));
-    }
+        // Urut berdasarkan created_at terbaru
+        $diklats = $diklats->orderBy('created_at', 'desc')
+                        ->paginate(10)
+                        ->withQueryString();
 
+        return view('content.tables.diklat', compact('diklats'));
+    }
     public function pesertaLolos($id)
     {
         $diklat = Diklat::findOrFail($id);
@@ -72,7 +75,10 @@ class DiklatController extends Controller
         ]);
 
         if ($request->hasFile('surat')) {
-            $validated['surat'] = $this->handleFileUpload($request, 'surat', 'surat_diklat');
+            $file = $request->file('surat');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('public/surat_diklat', $fileName);
+            $validated['surat'] = $fileName;
         }
 
         if ($request->hasFile('foto')) {
@@ -100,7 +106,15 @@ class DiklatController extends Controller
         ]);
 
         if ($request->hasFile('surat')) {
-            $validated['surat'] = $this->handleFileUpload($request, 'surat', 'surat_diklat', $diklat->surat);
+            // Delete old file if exists
+            if ($diklat->surat && Storage::disk('public')->exists('surat_diklat/' . $diklat->surat)) {
+                Storage::disk('public')->delete('surat_diklat/' . $diklat->surat);
+            }
+            
+            $file = $request->file('surat');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('public/surat_diklat', $fileName);
+            $diklat->surat = $fileName;
         }
 
         if ($request->hasFile('foto')) {
@@ -195,6 +209,28 @@ class DiklatController extends Controller
         }
     }
 
+    public function togglePengumuman($id)
+    {
+        try {
+            $diklat = Diklat::findOrFail($id);
+            
+            // Toggle the pengumuman status
+            $diklat->pengumuman = !$diklat->pengumuman;
+            $diklat->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => $diklat->pengumuman ? 'Pengumuman berhasil diaktifkan' : 'Pengumuman berhasil dinonaktifkan'
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Error toggling pengumuman: " . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengupdate pengumuman'
+            ], 500);
+        }
+    }
+
     public function togglePesertaStatus($id)
     {
         try {
@@ -259,8 +295,12 @@ class DiklatController extends Controller
 
     public function showForUser()
     {
-        $diklat = Diklat::where('status', 1)->get();
-        return view('user.main', compact('diklat'));
+        $diklatAktif = Diklat::where('status', 1)
+                            ->orderBy('created_at', 'desc')
+                            ->paginate(10)
+                            ->withQueryString();
+        
+        return view('user.index-u', compact('diklatAktif'));
     }
 
     public function batalkanPeserta($id)

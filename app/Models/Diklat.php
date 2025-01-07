@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Diklat extends Model
 {
@@ -41,6 +42,7 @@ class Diklat extends Model
 
     protected $casts = [
         'status' => 'boolean',
+        'pengumuman' => 'boolean',
         'tgl_mulai' => 'date',
         'tgl_selesai' => 'date',
         'kuota' => 'integer'
@@ -73,11 +75,38 @@ class Diklat extends Model
 
     public function diklatAktif()
     {
-        // Ambil data diklat yang statusnya aktif (1) dan urutkan berdasarkan tanggal mulai
         $diklatAktif = Diklat::where('status', 1)
-            ->orderBy('tgl_mulai', 'asc')
-            ->paginate(10);
+            ->orderBy('id_diklat', 'desc')  // Changed from tgl_mulai to id_diklat
+            ->paginate(10)
+            ->withQueryString();  // Add this to preserve query parameters
 
         return view('diklat-aktif', compact('diklatAktif'));
+    }
+
+    public function getFotoUrlAttribute()
+    {
+        // Default image URL
+        $defaultImage = 'https://storage.googleapis.com/a1aa/image/uVuHkkWH0yKVAxK6BeGXk2M21UMFgjDfUpPk5HNo3TSYtD6TA.jpg';
+
+        if (empty($this->foto)) {
+            // Return default image if no photo exists
+            return $defaultImage;
+        }
+
+        // Check if the photo contains a timestamp (new format)
+        if (strpos($this->foto, '_') !== false) {
+            // Check if file exists in new location
+            if (Storage::exists('public/foto_diklat/' . $this->foto)) {
+                return Storage::url('foto_diklat/' . $this->foto);
+            }
+        }
+
+        // Check if old format file exists
+        if (Storage::exists('public/assets/img/diklat/' . $this->foto)) {
+            return asset('storage/assets/img/diklat/' . $this->foto);
+        }
+
+        // If no photo is found, return default image
+        return $defaultImage;
     }
 }
