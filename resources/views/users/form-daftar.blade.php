@@ -7,12 +7,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f9fafc;
-            color: #333;
-        }
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f9fafc;
+        color: #333;
+    }
 
         .container {
             max-width: 1200px;
@@ -32,16 +32,16 @@
             transition: transform 0.3s;
         }
 
-        .btn-submit {
-            background-color:#007bff;
-            border: none;
-            color: white;
-            font-weight: 600;
-            padding: 10px 20px;
-            border-radius: 50px;
-            transition: background 0.3s, box-shadow 0.3s;
-            width: 100%;
-        }
+    .btn-submit {
+        background-color: #007bff;
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 10px 20px;
+        border-radius: 50px;
+        transition: background 0.3s, box-shadow 0.3s;
+        width: 100%;
+    }
 
         .btn-submit:hover {
             background-color: whitesmoke;
@@ -55,7 +55,7 @@
         }
     </style>
 
-    @include('layouts.sections.navbar.navbar-user')
+@include('layouts.sections.navbar.navbar-user')
 
     <body>
         <div class="container py-5">
@@ -65,7 +65,7 @@
             <div class="container mt-5 mb-4">
                 <div class="row align-items-center">
                     <div class="col-auto">
-                        <div class="rounded-circle border d-flex justify-content-center align-items-center" 
+                        <div class="rounded-circle border d-flex justify-content-center align-items-center"
                              style="width: 60px; height: 60px; background-color: #f1f1f1;">
                             <i class='bx bx-user' style="font-size: 2rem; color: #6c757d;"></i>
                         </div>
@@ -184,8 +184,8 @@
                                 <span class="text-danger ms-2" style="font-size: 0.9em;">(PILIH STATUS KEPEGAWAIAN ANDA)</span>
                                 <div class="mt-2">
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="identitas" id="pns" value="1" 
-                                            {{ (isset($dataDiri->identitas) && $dataDiri->identitas == 1) ? 'checked' : '' }} 
+                                        <input class="form-check-input" type="radio" name="identitas" id="pns" value="1"
+                                            {{ (isset($dataDiri->identitas) && $dataDiri->identitas == 1) ? 'checked' : '' }}
                                             {{ isset($dataDiri->identitas) ? 'readonly' : 'required' }}>
                                         <label class="form-check-label" for="pns">PNS</label>
                                     </div>
@@ -262,7 +262,7 @@
                 form.addEventListener('submit', function(e) {
                     let formValid = true;
                     const inputs = document.querySelectorAll('input[required], select[required]');
-                    
+
                     inputs.forEach(input => {
                         if (!input.value.trim()) {
                             formValid = false;
@@ -302,7 +302,7 @@
             document.querySelector('form').addEventListener('submit', function(e) {
                 let kabValue = document.querySelector('select[name="kab"]').value;
                 console.log('Selected kabupaten value:', kabValue);
-                
+
                 if (!kabValue) {
                     e.preventDefault();
                     alert('Silakan pilih kabupaten');
@@ -312,5 +312,5 @@
         </script>
     </body>
 
-    @include('layouts.sections.footer.footer-user')
+@include('layouts.sections.footer.footer-user')
 @endsection
