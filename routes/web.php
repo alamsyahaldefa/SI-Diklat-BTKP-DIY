@@ -130,6 +130,8 @@ Route::middleware(['admin'])->group(function () {
         Route::put('/{id}/update', [DiklatController::class, 'update'])->name('diklat.update');
         Route::delete('/{id}/delete', [DiklatController::class, 'destroy'])->name('diklat.destroy');
 
+        Route::post('/{id}/toggle-pengumuman', [DiklatController::class, 'togglePengumuman'])->name('diklat.togglePengumuman');
+
         Route::get('/foto-diklat', [DiklatController::class, 'fotoDiklat'])->name('dokumentasi.foto');
         Route::post('/{id}/update-foto', [DiklatController::class, 'updateFoto'])->name('diklat.update-foto');
 
