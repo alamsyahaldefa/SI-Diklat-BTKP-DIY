@@ -21,7 +21,6 @@
               Hai, {{ Auth::guard('admin')->check() ? Auth::guard('admin')->user()->user : 'Admin' }}!
             </h5>
             <p class="mb-4">Selamat Datang di Halaman Administrator.</p>
-            <a href="javascript:;" class="btn btn-sm btn-outline-primary">View Badges</a>
           </div>
         </div>
         <div class="col-sm-5 text-center text-sm-left">
@@ -39,7 +38,7 @@
       <div class="card">
         <div class="card-body">
           <h6 class="card-title">Total Pengguna</h6>
-          <p class="card-text display-4 text-primary">150</p>
+          <p class="card-text display-4 text-primary">+1000</p>
         </div>
       </div>
     </div>
@@ -47,15 +46,7 @@
       <div class="card">
         <div class="card-body">
           <h6 class="card-title">Jumlah Diklat</h6>
-          <p class="card-text display-4 text-success">30</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card">
-        <div class="card-body">
-          <h6 class="card-title">Aktivitas Terkini</h6>
-          <p class="card-text">5 pengguna baru minggu ini</p>
+          <p class="card-text display-4 text-success">+50</p>
         </div>
       </div>
     </div>

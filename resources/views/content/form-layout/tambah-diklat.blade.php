@@ -81,28 +81,6 @@
           </div>
         </div>
 
-        <!-- <div class="row mb-3">
-          <label class="col-sm-2 col-form-label">Dokumen</label>
-          <div class="col-sm-10">
-            <input type="file" name="surat" class="form-control @error('surat') is-invalid @enderror" />
-            @error('surat')
-            <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-            <div class="form-text">Upload file PDF, DOC, atau DOCX (max: 2MB)</div>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <label class="col-sm-2 col-form-label">Foto</label>
-          <div class="col-sm-10">
-            <input type="file" name="foto" class="form-control @error('foto') is-invalid @enderror" />
-            @error('foto')
-            <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-            <div class="form-text">Upload file JPG, JPEG, atau PNG (max: 2MB)</div>
-          </div>
-        </div> -->
-
         <div class="row mb-3">
           <label class="col-sm-2 col-form-label">Syarat & Ketentuan</label>
           <div class="col-sm-10">

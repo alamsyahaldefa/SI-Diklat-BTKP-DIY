@@ -20,7 +20,6 @@
               <img src="{{ asset('assets/img/branding/logo-btkp.png') }}" alt="Logo BTKP" style="width:150px; height:auto;">
             </a>
           </div>
-          <!-- /Logo -->
           <h4 class="mb-4">Login Administrator</h4>
           <!-- Alert jika login gagal -->
           @if ($errors->has('login_error'))
@@ -28,7 +27,7 @@
             {{ $errors->first('login_error') }}
           </div>
           @endif
-          <!-- /Alert -->
+
 
           <form id="formAuthentication" class="mb-3" action="{{ route('login') }}" method="POST">
             @csrf
@@ -67,10 +66,9 @@
         </div>
       </div>
     </div>
-    <!-- /Register -->
   </div>
   <p class="text-center">
-    <span>Copyrights | 2024 Balai Tekkomdik DIY</span>
+    <span>Copyrights | 2025 Balai Tekkomdik DIY</span>
   </p>
 </div>
 </div>

@@ -161,13 +161,10 @@
                             <span class="text-danger ms-2" style="font-size: 0.9em;">(PILIH SESUAI DENGAN JENJANG ANDA)</span>
                             <select name="jenjang" class="form-control" {{ isset($dataDiri->jenjang) ? 'readonly' : 'required' }}>
                                 <option value="">Pilih Jenjang</option>
-                                <option value="TK" {{ (isset($dataDiri->jenjang_str) && $dataDiri->jenjang_str == 'TK/PAUD') ? 'selected' : '' }}>TK/PAUD</option>
-                                <option value="SD" {{ (isset($dataDiri->jenjang_str) && $dataDiri->jenjang_str == 'SD') ? 'selected' : '' }}>SD</option>
-                                <option value="SMP" {{ (isset($dataDiri->jenjang_str) && $dataDiri->jenjang_str == 'SMP') ? 'selected' : '' }}>SMP</option>
+                                <option value="SLB" {{ (isset($dataDiri->jenjang_str) && $dataDiri->jenjang_str == 'SLB') ? 'selected' : '' }}>SLB</option>
                                 <option value="SMA" {{ (isset($dataDiri->jenjang_str) && $dataDiri->jenjang_str == 'SMA') ? 'selected' : '' }}>SMA</option>
-                                <option value="SMAN" {{ (isset($dataDiri->jenjang_str) && $dataDiri->jenjang_str == 'SMAN') ? 'selected' : '' }}>SMAN</option>
                                 <option value="SMK" {{ (isset($dataDiri->jenjang_str) && $dataDiri->jenjang_str == 'SMK') ? 'selected' : '' }}>SMK</option>
-                                <option value="SMKN" {{ (isset($dataDiri->jenjang_str) && $dataDiri->jenjang_str == 'SMKN') ? 'selected' : '' }}>SMKN</option>
+                                <!-- <option value="SMKN" {{ (isset($dataDiri->jenjang_str) && $dataDiri->jenjang_str == 'SMKN') ? 'selected' : '' }}>SMKN</option> -->
                             </select>
                         </div>
 

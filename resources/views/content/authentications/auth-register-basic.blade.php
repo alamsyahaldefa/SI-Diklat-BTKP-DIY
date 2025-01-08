@@ -72,7 +72,6 @@
           </p>
         </div>
       </div>
-      <!-- Register Card -->
     </div>
   </div>
 </div>
